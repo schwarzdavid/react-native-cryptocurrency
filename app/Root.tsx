@@ -1,32 +1,22 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import MainBar from "./partials/MainBar";
 import {registerRootComponent} from "expo";
 import {InitialProps} from "expo/build/launch/withExpoRoot.types";
 import {Provider as PaperProvider} from "react-native-paper";
 import AppNavigator from "./Navigator";
+import {SafeAreaProvider} from "react-native-safe-area-context";
+import theme from "./Theme";
+import {FontAwesome} from "@expo/vector-icons";
 
 class Root extends React.Component<InitialProps> {
     render() {
         return (
-            <PaperProvider>
-                <View style={styles.container}>
-                    <MainBar/>
+            <SafeAreaProvider>
+                <PaperProvider theme={theme} settings={{icon: props => <FontAwesome {...props}/>}}>
                     <AppNavigator/>
-                    <Text>Jetzt vlt</Text>
-                </View>
-            </PaperProvider>
+                </PaperProvider>
+            </SafeAreaProvider>
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f00',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});
 
 export default registerRootComponent(Root);
