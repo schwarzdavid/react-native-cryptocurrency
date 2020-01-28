@@ -32,7 +32,7 @@ const CurrencyPages = createMaterialBottomTabNavigator({
     }
 }, {
     initialRouteName: 'Overview',
-    inactiveColor: '#FFFFFFAA',
+    inactiveColor: '#FFFFFFAA'
 });
 
 export default CurrencyPages;
