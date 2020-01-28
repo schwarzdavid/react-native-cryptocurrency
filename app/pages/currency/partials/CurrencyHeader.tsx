@@ -1,23 +1,43 @@
 import React from "react";
-import {Appbar} from "react-native-paper";
-import {Animated, StyleSheet} from "react-native";
+import {Animated, StyleSheet, View} from "react-native";
+import {SafeAreaView} from "react-native-safe-area-context";
+import {MaterialCommunityIcons as Icon} from "@expo/vector-icons";
+import {NavigationInjectedProps, withNavigation} from "react-navigation";
 
-const AnimatedAppbar = Animated.createAnimatedComponent(Appbar);
-
-interface ICurrencyHeaderProps {
-    backgroundColor: string | Animated.AnimatedInterpolation
+interface ICurrencyHeaderAnimateProps {
+    backgroundColor: Animated.AnimatedInterpolation,
+    elevation: Animated.AnimatedInterpolation,
+    paddingHorizontal: Animated.AnimatedInterpolation,
+    color: Animated.AnimatedInterpolation
 }
 
+interface ICurrencyHeaderProps extends NavigationInjectedProps {
+    animate: ICurrencyHeaderAnimateProps
+}
+
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
+
 class CurrencyHeader extends React.Component<ICurrencyHeaderProps> {
+    render() {
+        const {backgroundColor, elevation, color, paddingHorizontal} = this.props.animate;
+        const {navigate} = this.props.navigation;
+        return (
+            <View style={styles.container}>
+                <SafeAreaView>
+                    <Animated.View style={[styles.appbar, {backgroundColor, elevation, paddingHorizontal}]}>
+                        <View style={styles.appbarContent}>
+                            <AnimatedIcon name="death-star-variant" style={{color}} size={30}/>
+                            <Animated.Text style={[styles.title, {color}]}>Currencyshizzl</Animated.Text>
+                        </View>
+                        <AnimatedIcon name="information" style={{color}} size={30} onPress={() => navigate('Disclaimer')}/>
+                    </Animated.View>
+                </SafeAreaView>
+            </View>
+        );
+    }
+
     public static Animate = class Animate {
         private _value = new Animated.Value(0);
-
-        constructor() {
-            this._value.addListener(({value}) => {
-                console.log(value);
-            });
-        }
-
 
         public onScroll = Animated.event([{
             nativeEvent: {
@@ -27,35 +47,59 @@ class CurrencyHeader extends React.Component<ICurrencyHeaderProps> {
             }
         }]).bind(this);
 
-        public get value(): Animated.AnimatedInterpolation {
-            return this._value.interpolate({
-                inputRange: [0, 100],
-                outputRange: ['transparent', '#FF0000']
+        public get value(): ICurrencyHeaderAnimateProps {
+            const backgroundColor = this._value.interpolate({
+                inputRange: [0, 65],
+                outputRange: ['transparent', '#FFFFFF']
             });
+
+            const elevation = this._value.interpolate({
+                inputRange: [40, 65],
+                outputRange: [0, 5],
+                extrapolate: 'clamp'
+            });
+
+            const paddingHorizontal = this._value.interpolate({
+                inputRange: [0, 65],
+                outputRange: [0, 10],
+                extrapolate: 'clamp'
+            });
+
+            const color = this._value.interpolate({
+                inputRange: [0, 65],
+                outputRange: ['#FFFFFF', '#4DADFE'],
+                extrapolate: 'clamp'
+            });
+
+            return {backgroundColor, elevation, paddingHorizontal, color};
         }
     };
-
-    componentDidUpdate() {
-        console.log(this.props);
-    }
-
-    render() {
-        return (
-            <AnimatedAppbar style={[styles.appbar, {backgroundColor: this.props.backgroundColor}]}>
-                <Appbar.Action icon="plus"/>
-                <Appbar.Content title="Hey"/>
-                <Appbar.Action icon="info"/>
-            </AnimatedAppbar>
-        );
-    }
 }
 
 const styles = StyleSheet.create({
+    container: {
+        position: 'absolute',
+        top: 10,
+        left: 20,
+        right: 20
+    },
     appbar: {
-        marginHorizontal: 20,
-        elevation: 0,
-        borderRadius: 1000
+        backgroundColor: 'transparent',
+        borderRadius: 1000,
+        height: 50,
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    appbarContent: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    title: {
+        fontSize: 22,
+        paddingLeft: 5
     }
 });
 
-export default CurrencyHeader;
+export default withNavigation(CurrencyHeader);
