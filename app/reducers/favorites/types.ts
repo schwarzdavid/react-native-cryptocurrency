@@ -1,0 +1,5 @@
+interface IFavoritesState {
+
+}
+
+export {IFavoritesState}

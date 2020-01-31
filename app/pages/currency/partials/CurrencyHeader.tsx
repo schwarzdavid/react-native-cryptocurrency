@@ -17,6 +17,45 @@ interface ICurrencyHeaderProps extends NavigationInjectedProps {
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
+class Animate {
+    private _value = new Animated.Value(0);
+
+    public onScroll = Animated.event([{
+        nativeEvent: {
+            contentOffset: {
+                y: this._value
+            }
+        }
+    }]).bind(this);
+
+    public get value(): ICurrencyHeaderAnimateProps {
+        const backgroundColor = this._value.interpolate({
+            inputRange: [0, 65],
+            outputRange: ['transparent', '#FFFFFF']
+        });
+
+        const elevation = this._value.interpolate({
+            inputRange: [40, 65],
+            outputRange: [0, 5],
+            extrapolate: 'clamp'
+        });
+
+        const paddingHorizontal = this._value.interpolate({
+            inputRange: [0, 65],
+            outputRange: [0, 10],
+            extrapolate: 'clamp'
+        });
+
+        const color = this._value.interpolate({
+            inputRange: [0, 65],
+            outputRange: ['#FFFFFF', '#4DADFE'],
+            extrapolate: 'clamp'
+        });
+
+        return {backgroundColor, elevation, paddingHorizontal, color};
+    }
+}
+
 class CurrencyHeader extends React.Component<ICurrencyHeaderProps> {
     render() {
         const {backgroundColor, elevation, color, paddingHorizontal} = this.props.animate;
@@ -35,45 +74,6 @@ class CurrencyHeader extends React.Component<ICurrencyHeaderProps> {
             </View>
         );
     }
-
-    public static Animate = class Animate {
-        private _value = new Animated.Value(0);
-
-        public onScroll = Animated.event([{
-            nativeEvent: {
-                contentOffset: {
-                    y: this._value
-                }
-            }
-        }]).bind(this);
-
-        public get value(): ICurrencyHeaderAnimateProps {
-            const backgroundColor = this._value.interpolate({
-                inputRange: [0, 65],
-                outputRange: ['transparent', '#FFFFFF']
-            });
-
-            const elevation = this._value.interpolate({
-                inputRange: [40, 65],
-                outputRange: [0, 5],
-                extrapolate: 'clamp'
-            });
-
-            const paddingHorizontal = this._value.interpolate({
-                inputRange: [0, 65],
-                outputRange: [0, 10],
-                extrapolate: 'clamp'
-            });
-
-            const color = this._value.interpolate({
-                inputRange: [0, 65],
-                outputRange: ['#FFFFFF', '#4DADFE'],
-                extrapolate: 'clamp'
-            });
-
-            return {backgroundColor, elevation, paddingHorizontal, color};
-        }
-    };
 }
 
 const styles = StyleSheet.create({
@@ -103,3 +103,4 @@ const styles = StyleSheet.create({
 });
 
 export default withNavigation(CurrencyHeader);
+export {Animate}

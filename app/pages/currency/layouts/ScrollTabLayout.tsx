@@ -1,6 +1,6 @@
 import React from "react";
 import {ScrollView, StyleSheet, View} from "react-native";
-import CurrencyHeader from "../partials/CurrencyHeader";
+import {default as CurrencyHeader, Animate} from "../partials/CurrencyHeader";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {LinearGradient} from "expo-linear-gradient";
 
@@ -9,7 +9,7 @@ interface IScrollTabLayoutProps {
 }
 
 class ScrollTabLayout extends React.Component<IScrollTabLayoutProps> {
-    private _headerAnimate = new CurrencyHeader.Animate();
+    private _headerAnimate = new Animate();
 
     render() {
         const {children} = this.props;
