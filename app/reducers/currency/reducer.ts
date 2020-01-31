@@ -4,8 +4,7 @@ import {cloneDeep} from 'lodash';
 
 const initialState: ICurrencyState = {
     currencies: [],
-    isLoading: false,
-    baseCurrency: 'EUR'
+    isLoading: false
 };
 
 export default function CurrencyReducer(state: ICurrencyState = initialState, action: CurrencyActionTypes): ICurrencyState {

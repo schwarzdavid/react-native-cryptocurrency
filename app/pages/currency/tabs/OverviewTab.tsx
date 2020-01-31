@@ -5,14 +5,14 @@ import {NavigationInjectedProps} from "react-navigation";
 import {connect, ConnectedProps} from "react-redux";
 import {ICurrencyState} from "../../../reducers/currency/types";
 import moment from "moment";
-import {reloadAll} from "../../../reducers/currency/actions";
+import {reloadAllAction} from "../../../reducers/currency/actions";
 
 const mapState = (state: ICurrencyState) => ({
     lastUpdated: state.lastUpdated
 });
 
 const mapDispatch = {
-    reload: reloadAll
+    reload: reloadAllAction
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -25,9 +25,7 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
         if(!this.props.lastUpdated){
             return 'Never';
         }
-
-        //return moment(this.props.lastUpdated).format('YYYY MM DD, hh:mm');
-        return this.props.lastUpdated.toString();
+        return moment(this.props.lastUpdated).format('YYYY MM DD, hh:mm');
     }
 
     componentDidMount(): void {

@@ -1,6 +1,7 @@
 import {combineReducers} from "redux";
 import FavoritesReducer from "./favorites/reducer";
 import CurrencyReducer from "./currency/reducer";
+import SettingsReducer from "./settings/reducer";
 import {AsyncStorage} from 'react-native';
 import {persistReducer} from "redux-persist";
 
@@ -11,7 +12,8 @@ const persistConfig = {
 
 const RootReducer = combineReducers({
     FavoritesReducer,
-    CurrencyReducer
+    CurrencyReducer,
+    SettingsReducer
 });
 
 const PersistedReducer = persistReducer(persistConfig, RootReducer);

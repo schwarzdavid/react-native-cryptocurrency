@@ -6,8 +6,7 @@ interface ICurrency {
 interface ICurrencyState {
     currencies: ICurrency[],
     lastUpdated?: number,
-    isLoading: boolean,
-    baseCurrency: string
+    isLoading: boolean
 }
 
 export {ICurrency, ICurrencyState}
