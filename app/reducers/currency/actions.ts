@@ -4,7 +4,6 @@ interface ReloadAllAction {
     payload?: any
 }
 function reloadAll(): ReloadAllAction {
-    // TODO: DO ME
     return {
         type: RELOAD_ALL
     };

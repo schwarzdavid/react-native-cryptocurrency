@@ -4,7 +4,8 @@ interface ICurrency {
 }
 
 interface ICurrencyState {
-    currencies: ICurrency[]
+    currencies: ICurrency[],
+    lastUpdated?: number
 }
 
 export {ICurrency, ICurrencyState}
