@@ -68,7 +68,12 @@ class CurrencyHeader extends React.Component<ICurrencyHeaderProps> {
                             <AnimatedIcon name="death-star-variant" style={{color}} size={30}/>
                             <Animated.Text style={[styles.title, {color}]}>Currencyshizzl</Animated.Text>
                         </View>
-                        <AnimatedIcon name="information" style={{color}} size={30} onPress={() => navigate('Disclaimer')}/>
+                        <View style={styles.appbarContent}>
+                            <AnimatedIcon name="settings" style={{color}} size={30}
+                                          onPress={() => navigate('Settings')}/>
+                            <AnimatedIcon name="information" style={{color}} size={30}
+                                          onPress={() => navigate('Disclaimer')}/>
+                        </View>
                     </Animated.View>
                 </SafeAreaView>
             </View>

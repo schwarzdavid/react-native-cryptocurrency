@@ -1,11 +1,18 @@
+import {ThunkAction} from "redux-thunk";
+import {ICurrencyState} from "./types";
+
 const RELOAD_ALL = 'CURRENCY_RELOAD_ALL';
 interface ReloadAllAction {
     type: typeof RELOAD_ALL,
     payload?: any
 }
-function reloadAll(): ReloadAllAction {
-    return {
-        type: RELOAD_ALL
+function reloadAll(): ThunkAction<Promise<void>, ICurrencyState, {}, ReloadAllAction> {
+    return async (dispatch) => {
+        const exchanges = await fetch('https://api.exchangeratesapi.io/latest').then(res => res.json());
+        dispatch({
+            type: RELOAD_ALL,
+            payload: exchanges
+        });
     };
 }
 export {RELOAD_ALL, ReloadAllAction, reloadAll}
