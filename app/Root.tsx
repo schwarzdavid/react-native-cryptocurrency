@@ -9,7 +9,7 @@ import {Provider as ReduxProvider} from "react-redux";
 import {configureStore} from "./reducers";
 import {PersistGate} from "redux-persist/integration/react";
 import {AppLoading} from "expo";
-import {reloadCurrenciesAction} from "./reducers/settings/actions";
+import {reloadCurrenciesAction} from "./reducers/currency/actions";
 
 interface IRootState {
     isAppReady: boolean

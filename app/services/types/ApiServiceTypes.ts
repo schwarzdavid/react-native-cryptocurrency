@@ -39,4 +39,16 @@ interface IProfileResponse extends IFcResponse {
     ]
 }
 
-export {IListResponse, IProfileResponse}
+interface ILatestResponse extends IFcResponse {
+    response: [
+        {
+            symbol: string,
+            price: string,
+            change: string,
+            change_per: string,
+            last_changed: string
+        }
+    ]
+}
+
+export {IListResponse, IProfileResponse, ILatestResponse}

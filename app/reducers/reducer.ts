@@ -11,11 +11,14 @@ const persistConfig = {
 };
 
 const RootReducer = combineReducers({
-    FavoritesReducer,
-    CurrencyReducer,
-    SettingsReducer
+    favorites: FavoritesReducer,
+    currency: CurrencyReducer,
+    settings: SettingsReducer
 });
+
+type RootState = ReturnType<typeof RootReducer>
 
 const PersistedReducer = persistReducer(persistConfig, RootReducer);
 
 export default PersistedReducer;
+export {RootState}

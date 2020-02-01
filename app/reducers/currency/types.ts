@@ -1,12 +1,27 @@
-interface ICurrency {
+interface ICurrencyDetail {
     name: string,
-    type: 'real' | 'crypto'
+    shortName: string,
+    icon: string,
+    type: 'forex' | 'crypto'
+}
+
+interface IPrice {
+    price: number,
+    lastChanged: string
+}
+
+interface ICurrency extends ICurrencyDetail {
+    tradeCurrencies: {
+        [key: string]: IPrice | null
+    }
 }
 
 interface ICurrencyState {
-    currencies: ICurrency[],
-    lastUpdated?: number,
+    currencies: {
+        [key: string]: ICurrency
+    },
+    lastUpdated: number | null,
     isLoading: boolean
 }
 
-export {ICurrency, ICurrencyState}
+export {ICurrency, ICurrencyState, ICurrencyDetail, IPrice}

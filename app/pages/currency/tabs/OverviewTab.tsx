@@ -1,18 +1,21 @@
 import React from "react";
-import {Text} from "react-native";
+import {Text, View} from "react-native";
 import ScrollTabLayout from "../layouts/ScrollTabLayout";
 import {NavigationInjectedProps} from "react-navigation";
 import {connect, ConnectedProps} from "react-redux";
-import {ICurrencyState} from "../../../reducers/currency/types";
 import moment from "moment";
-import {reloadAllAction} from "../../../reducers/currency/actions";
+import {reloadPricesAction} from "../../../reducers/currency/actions";
+import CurrencyFilter from "../partials/CurrencyFilter";
+import {RootState} from "../../../reducers/reducer";
 
-const mapState = (state: ICurrencyState) => ({
-    lastUpdated: state.lastUpdated
+const mapState = (state: RootState) => ({
+    lastUpdated: state.currency.lastUpdated,
+    isLoading: state.currency.isLoading,
+    currency: state.currency.currencies[state.settings.baseCurrency]
 });
 
 const mapDispatch = {
-    reload: reloadAllAction
+    reload: reloadPricesAction
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -22,22 +25,27 @@ interface IOverviewTabProps extends NavigationInjectedProps, ConnectedProps<type
 
 class OverviewTab extends React.Component<IOverviewTabProps> {
     get lastUpdated(): string {
-        if(!this.props.lastUpdated){
+        if (!this.props.lastUpdated) {
             return 'Never';
         }
         return moment(this.props.lastUpdated).format('YYYY MM DD, hh:mm');
     }
 
     componentDidMount(): void {
-        if(!this.props.lastUpdated){
+        if (!this.props.lastUpdated) {
             this.props.reload();
         }
     }
 
     render() {
+        // TODO: render tradeCurrencies here
         return (
             <ScrollTabLayout>
-                <Text style={{height:2000}}>{this.lastUpdated}</Text>
+                <CurrencyFilter/>
+                <Text>{this.props.isLoading.toString()}</Text>
+                <Text>{this.lastUpdated}</Text>
+
+                <View style={{height: 2000}}></View>
             </ScrollTabLayout>
         );
     }
