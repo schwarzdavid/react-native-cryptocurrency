@@ -3,7 +3,7 @@ import {SettingsActionTypes, SET_BASE_CURRENCY} from "./actions";
 import {cloneDeep} from 'lodash';
 
 const initialState: ISettingsState = {
-    baseCurrency: 'EUR'
+    baseCurrency: 'USD'
 };
 
 function SettingsReducer(state: ISettingsState = initialState, action: SettingsActionTypes): ISettingsState {

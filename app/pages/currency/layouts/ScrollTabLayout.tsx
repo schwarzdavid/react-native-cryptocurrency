@@ -1,23 +1,36 @@
 import React from "react";
-import {ScrollView, StyleSheet, View} from "react-native";
+import {RefreshControl, ScrollView, StyleSheet, View} from "react-native";
 import {default as CurrencyHeader, Animate} from "../partials/CurrencyHeader";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {LinearGradient} from "expo-linear-gradient";
 
 interface IScrollTabLayoutProps {
-    children: React.ReactNode
+    children: React.ReactNode,
+    refreshing?: boolean,
+    onRefresh?: () => any
 }
 
 class ScrollTabLayout extends React.Component<IScrollTabLayoutProps> {
     private _headerAnimate = new Animate();
 
+    get _refreshing(): boolean {
+        return !!this.props.refreshing;
+    }
+
+    get _onRefresh(): (() => any) {
+        return this.props.onRefresh ? this.props.onRefresh : () => {
+        };
+    }
+
     render() {
         const {children} = this.props;
         return (
             <View>
-                <LinearGradient colors={['#4DADFE', '#00F1FE', 'transparent']} style={styles.gradient} />
+                <LinearGradient colors={['#4DADFE', '#00F1FE', 'transparent']} style={styles.gradient}/>
                 <SafeAreaView>
-                    <ScrollView onScroll={this._headerAnimate.onScroll} scrollEventThrottle={16} style={styles.scrollView}>
+                    <ScrollView onScroll={this._headerAnimate.onScroll} scrollEventThrottle={16}
+                                style={styles.scrollView} refreshControl={<RefreshControl refreshing={this._refreshing}
+                                                                                          onRefresh={this._onRefresh}/>}>
                         <View style={styles.view}>
                             {children}
                         </View>
@@ -34,7 +47,7 @@ const styles = StyleSheet.create({
         marginTop: 70,
     },
     view: {
-        marginHorizontal: 20
+        marginHorizontal: 15
     },
     gradient: {
         height: 300,

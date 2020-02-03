@@ -1,4 +1,4 @@
-import {IListResponse, IProfileResponse, ILatestResponse} from "./types/ApiServiceTypes";
+import {IListResponse, IProfileResponse, ILatestResponse, IHistoryResponse} from "./types/ApiServiceTypes";
 import {ICurrency, ICurrencyDetail, IPrice} from "../reducers/currency/types";
 
 class ApiService {
@@ -29,7 +29,6 @@ class ApiService {
 
     public static async getSymbols(): Promise<{ [key: string]: ICurrency[] }> {
         const url = this.buildUrl('list');
-        url.searchParams.append('type', 'forex');
 
         const response = await fetch(url.toString()).then(res => res.json()) as IListResponse;
         const output = {} as { [key: string]: any };
@@ -71,6 +70,21 @@ class ApiService {
         });
 
         return output;
+    }
+
+    public static async getHistory(symbols: string[], days: number = 30): Promise<{ [key: string]: any }> {
+        const requests = symbols.map(symbol => {
+            const url = this.buildUrl('history');
+            url.searchParams.append('symbol', symbols.join(','));
+
+            console.log(url.toString());
+
+            return fetch(url.toString()).then(res => res.json()) as Promise<IHistoryResponse>;
+        });
+
+        const responses = await Promise.all(requests);
+
+        return {};
     }
 }
 

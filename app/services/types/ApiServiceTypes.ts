@@ -51,4 +51,17 @@ interface ILatestResponse extends IFcResponse {
     ]
 }
 
-export {IListResponse, IProfileResponse, ILatestResponse}
+interface IHistoryResponse extends IFcResponse {
+    response: [
+        {
+            o: string,
+            h: string,
+            l: string,
+            c: string,
+            t: number,
+            tm: string
+        }
+    ]
+}
+
+export {IListResponse, IProfileResponse, ILatestResponse, IHistoryResponse}

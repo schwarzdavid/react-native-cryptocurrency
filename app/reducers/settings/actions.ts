@@ -1,5 +1,3 @@
-import {ThunkAction} from "redux-thunk";
-import {ISettingsState} from "./types";
 import {Action} from "redux";
 
 //*******************************************
@@ -19,6 +17,7 @@ function setBaseCurrencyAction(symbol: string): ISetBaseCurrencyAction {
 }
 
 export {SET_BASE_CURRENCY, ISetBaseCurrencyAction, setBaseCurrencyAction}
+
 
 //*******************************************
 // EXPORT ACTION TYPE

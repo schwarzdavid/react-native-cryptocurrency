@@ -1,5 +1,12 @@
-interface IFavoritesState {
+interface IFavoriteCurrency {
 
 }
 
-export {IFavoritesState}
+interface IFavoritesState {
+    favorites: {
+        [key: string]: IFavoriteCurrency
+    },
+    isLoading: boolean
+}
+
+export {IFavoritesState, IFavoriteCurrency}

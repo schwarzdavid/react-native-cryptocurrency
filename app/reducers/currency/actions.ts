@@ -82,9 +82,9 @@ function reloadPricesAction(): ThunkAction<Promise<void>, RootState, {}, Action>
     return async (dispatch, getState) => {
         dispatch(setLoadingStatusAction(true));
         const state = getState();
-        const requiredPriceSymbols = Object.keys(state.currency.currencies[state.settings.baseCurrency].tradeCurrencies).map(key => {
-            return [state.settings.baseCurrency, key].join('/');
-        });
+        const requiredPriceSymbols = Object.keys(state.currency.currencies[state.settings.baseCurrency].tradeCurrencies)
+            .filter(key => state.currency.currencies.hasOwnProperty(key))
+            .map(key => [state.settings.baseCurrency, key].join('/'));
         const prices = await ApiService.getPrices(requiredPriceSymbols);
         dispatch(setPricesAction(state.settings.baseCurrency, prices));
         dispatch(setLoadingStatusAction(false));
@@ -92,6 +92,7 @@ function reloadPricesAction(): ThunkAction<Promise<void>, RootState, {}, Action>
 }
 
 export {reloadPricesAction}
+
 
 //*******************************************
 // EXPORT ACTION TYPE
