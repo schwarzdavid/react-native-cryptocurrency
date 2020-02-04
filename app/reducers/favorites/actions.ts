@@ -2,6 +2,7 @@ import {Action} from "redux";
 import {ThunkAction} from "redux-thunk";
 import {RootState} from "../reducer";
 import ApiService from "../../services/ApiService";
+import {IHistoryState} from "./types";
 
 //*******************************************
 // TOGGLE FAVORITE ACTION
@@ -20,6 +21,25 @@ function toggleFavoriteAction(key: string): IToggleFavoriteAction {
 }
 
 export {TOGGLE_FAVORITE, IToggleFavoriteAction, toggleFavoriteAction}
+
+
+//*******************************************
+// REMOVE FAVORITE ACTION
+//*******************************************
+const REMOVE_FAVORITE = 'REMOVE_FAVORITE';
+
+interface IRemoveFavoriteAction extends Action<typeof REMOVE_FAVORITE> {
+    key: string
+}
+
+function removeFavoriteAction(key: string): IRemoveFavoriteAction {
+    return {
+        type: REMOVE_FAVORITE,
+        key
+    };
+}
+
+export {REMOVE_FAVORITE, IRemoveFavoriteAction, removeFavoriteAction}
 
 
 //*******************************************
@@ -47,10 +67,10 @@ export {SET_LOADING_STATUS, ISetLoadingStatusAction, setLoadingStatusAction}
 const SET_HISTORY = 'SET_HISTORY';
 
 interface ISetHistoryAction extends Action<typeof SET_HISTORY> {
-    history: { [key: string]: any }
+    history: { [key: string]: IHistoryState[] }
 }
 
-function setHistoryAction(history: { [key: string]: any }): ISetHistoryAction {
+function setHistoryAction(history: { [key: string]: IHistoryState[] }): ISetHistoryAction {
     return {
         type: SET_HISTORY,
         history
@@ -68,13 +88,15 @@ function reloadFavoritesData(): ThunkAction<Promise<void>, RootState, {}, Action
         dispatch(setLoadingStatusAction(true));
         const state = getState();
         const requiredCurrencySymbols = Object.keys(state.favorites.favorites).map(favoriteKey => {
-            return [state.settings.baseCurrency, favoriteKey].join('/');
+            return [favoriteKey, state.settings.baseCurrency].join('/');
         });
-        const history = ApiService.getHistory(requiredCurrencySymbols);
+        const history = await ApiService.getHistory(requiredCurrencySymbols);
         dispatch(setHistoryAction(history));
         dispatch(setLoadingStatusAction(false));
     };
 }
+
+export {reloadFavoritesData}
 
 
 //*******************************************

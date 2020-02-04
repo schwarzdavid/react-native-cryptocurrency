@@ -43,13 +43,13 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
         }
     }
 
-    renderCurrencyTabs = (): React.ReactNode[] => {
-        const tabs = [];
+    renderCurrencyCards = (): React.ReactNode[] => {
+        const cards = [];
         for (let [key, currency] of Object.entries(this.props.currency.tradeCurrencies)) {
             if (currency) {
                 const price = (this.props.currency.tradeCurrencies[key] as IPrice).price;
                 const isFavorite = this.props.isFavorite(key);
-                tabs.push(
+                cards.push(
                     <Card key={key} style={styles.card}>
                         <Card.Title title={key} subtitle={this.props.currencies[key].name}
                                     right={() => <Icon name={isFavorite ? 'star' : 'star-outline'} size={30}
@@ -63,14 +63,13 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
                 );
             }
         }
-        return tabs;
+        return cards;
     };
 
     render() {
-        // TODO: toggleFavoriteAction base currency switch here
         return (
-            <ScrollTabLayout refreshing={this.props.isLoading}>
-                {this.renderCurrencyTabs()}
+            <ScrollTabLayout refreshing={this.props.isLoading} onRefresh={this.props.reload}>
+                {this.renderCurrencyCards()}
                 <Text key="lastUpdated" style={styles.lastUpdated}>Last updated: {this.lastUpdated}</Text>
             </ScrollTabLayout>
         );

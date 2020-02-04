@@ -1,12 +1,13 @@
-interface IFavoriteCurrency {
-
+interface IHistoryState {
+    timestamp: number,
+    value: number
 }
 
 interface IFavoritesState {
     favorites: {
-        [key: string]: IFavoriteCurrency
+        [key: string]: IHistoryState[]
     },
     isLoading: boolean
 }
 
-export {IFavoritesState, IFavoriteCurrency}
+export {IFavoritesState, IHistoryState}

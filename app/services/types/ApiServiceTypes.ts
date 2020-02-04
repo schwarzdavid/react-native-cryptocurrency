@@ -51,7 +51,9 @@ interface ILatestResponse extends IFcResponse {
     ]
 }
 
-interface IHistoryResponse extends IFcResponse {
+interface IHistoryResponse {
+    status: boolean,
+    msg: string,
     response: [
         {
             o: string,
@@ -61,7 +63,14 @@ interface IHistoryResponse extends IFcResponse {
             t: number,
             tm: string
         }
-    ]
+    ],
+    info: {
+        id: string,
+        symbol: string,
+        decimal: string,
+        period: string,
+        server_time: string
+    }
 }
 
 export {IListResponse, IProfileResponse, ILatestResponse, IHistoryResponse}

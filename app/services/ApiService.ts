@@ -1,5 +1,6 @@
 import {IListResponse, IProfileResponse, ILatestResponse, IHistoryResponse} from "./types/ApiServiceTypes";
 import {ICurrency, ICurrencyDetail, IPrice} from "../reducers/currency/types";
+import {IHistoryState} from "../reducers/favorites/types";
 
 class ApiService {
     private static readonly API_KEY = 'YQtS1fWSJTzeDo4obvRV8VluszaSzTXXDM61C7GoG2qgS2ttsD';
@@ -72,19 +73,27 @@ class ApiService {
         return output;
     }
 
-    public static async getHistory(symbols: string[], days: number = 30): Promise<{ [key: string]: any }> {
+    public static async getHistory(symbols: string[], days: number = 30): Promise<{ [key: string]: IHistoryState[] }> {
         const requests = symbols.map(symbol => {
             const url = this.buildUrl('history');
-            url.searchParams.append('symbol', symbols.join(','));
-
-            console.log(url.toString());
+            url.searchParams.append('symbol', symbol);
 
             return fetch(url.toString()).then(res => res.json()) as Promise<IHistoryResponse>;
         });
 
         const responses = await Promise.all(requests);
+        const output = {} as { [key: string]: IHistoryState[] };
 
-        return {};
+        responses.forEach(response => {
+            const symbol = response.info.symbol.split('/')[0];
+            output[symbol] = response.response.map(candle => {
+                return {
+                    timestamp: candle.t,
+                    value: parseFloat(candle.h)
+                };
+            });
+        });
+        return output;
     }
 }
 
