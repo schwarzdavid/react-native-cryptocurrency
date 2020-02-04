@@ -1,6 +1,8 @@
 import {IFavoritesState} from "./types";
 import {FavoritesActions, SET_HISTORY, SET_LOADING_STATUS, TOGGLE_FAVORITE} from "./actions";
 
+const DEFAULT_HISTORY_DECIMALS = 3;
+
 const initialState: IFavoritesState = {
     favorites: {},
     isLoading: false
@@ -13,11 +15,14 @@ export default function FavoritesReducer(state: IFavoritesState = initialState, 
             if(clone.favorites.hasOwnProperty(action.key)){
                 delete clone.favorites[action.key];
             } else {
-                clone.favorites[action.key] = [];
+                clone.favorites[action.key] = {
+                    history: [],
+                    decimals: DEFAULT_HISTORY_DECIMALS
+                };
             }
             break;
         case SET_LOADING_STATUS:
-            clone.isLoading = !!action.status;
+            clone.isLoading = action.status;
             break;
         case SET_HISTORY:
             for(let i in action.history){

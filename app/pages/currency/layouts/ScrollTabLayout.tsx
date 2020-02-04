@@ -44,7 +44,7 @@ class ScrollTabLayout extends React.Component<IScrollTabLayoutProps> {
 
 const styles = StyleSheet.create({
     scrollView: {
-        marginTop: 70,
+        marginTop: 70
     },
     view: {
         marginHorizontal: 15

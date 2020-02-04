@@ -2,7 +2,7 @@ import {Action} from "redux";
 import {ThunkAction} from "redux-thunk";
 import {RootState} from "../reducer";
 import ApiService from "../../services/ApiService";
-import {IHistoryState} from "./types";
+import {IHistory} from "./types";
 
 //*******************************************
 // TOGGLE FAVORITE ACTION
@@ -67,10 +67,10 @@ export {SET_LOADING_STATUS, ISetLoadingStatusAction, setLoadingStatusAction}
 const SET_HISTORY = 'SET_HISTORY';
 
 interface ISetHistoryAction extends Action<typeof SET_HISTORY> {
-    history: { [key: string]: IHistoryState[] }
+    history: { [key: string]: IHistory }
 }
 
-function setHistoryAction(history: { [key: string]: IHistoryState[] }): ISetHistoryAction {
+function setHistoryAction(history: { [key: string]: IHistory }): ISetHistoryAction {
     return {
         type: SET_HISTORY,
         history
