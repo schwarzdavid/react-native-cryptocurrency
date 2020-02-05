@@ -10,11 +10,11 @@ import {Card} from "react-native-paper";
 import {IPrice} from "../../../reducers/currency/types";
 import {MaterialCommunityIcons as Icon} from "@expo/vector-icons";
 import {toggleFavoriteAction} from "../../../reducers/favorites/actions";
+import {getCurrentPrices} from "../../../reducers/currency/getter";
 
 const mapState = (state: RootState) => ({
-    lastUpdated: state.currency.lastUpdated,
     isLoading: state.currency.isLoading,
-    currency: state.currency.currencies[state.settings.baseCurrency],
+    prices: getCurrentPrices(state),
     currencies: state.currency.currencies,
     isFavorite: (key: string) => state.favorites.favorites.hasOwnProperty(key)
 });
@@ -30,20 +30,13 @@ interface IOverviewTabProps extends NavigationInjectedProps, ConnectedProps<type
 }
 
 class OverviewTab extends React.Component<IOverviewTabProps> {
-    get lastUpdated(): string {
-        if (!this.props.lastUpdated) {
-            return 'Never';
-        }
-        return moment(this.props.lastUpdated).format('DD.MM.YYYY hh:mm');
-    }
-
     componentDidMount(): void {
         if (!this.props.lastUpdated) {
             this.props.reload();
         }
     }
 
-    renderCurrencyCards = (): React.ReactNode[] => {
+    renderPriceCards = (): React.ReactNode[] => {
         const cards = [];
         for (let [key, currency] of Object.entries(this.props.currency.tradeCurrencies)) {
             if (currency) {
@@ -69,8 +62,7 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
     render() {
         return (
             <ScrollTabLayout refreshing={this.props.isLoading} onRefresh={this.props.reload}>
-                {this.renderCurrencyCards()}
-                <Text key="lastUpdated" style={styles.lastUpdated}>Last updated: {this.lastUpdated}</Text>
+                {this.renderPriceCards()}
             </ScrollTabLayout>
         );
     }
