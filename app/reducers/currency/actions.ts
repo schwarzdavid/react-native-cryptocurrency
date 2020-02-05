@@ -67,7 +67,7 @@ export {SET_CURRENCIES, ISetCurrenciesAction}
 //*******************************************
 function reloadCurrenciesAction(): ThunkAction<Promise<void>, RootState, {}, ISetCurrenciesAction> {
     return async (dispatch) => {
-        const currencies = await ApiService.getSymbols();
+        const currencies = await ApiService.getCurrenciesAndPrices();
         dispatch(setCurrenciesAction(currencies));
     };
 }

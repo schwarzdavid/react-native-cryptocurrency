@@ -1,27 +1,28 @@
-interface ICurrencyDetail {
+import {ICurrencyTupel} from "../types";
+
+interface IPrice {
+    currencies: ICurrencyTupel
+    price?: number,
+    decimals: number
+}
+
+interface ICurrency {
     name: string,
     shortName: string,
     icon: string,
     type: 'forex' | 'crypto'
 }
 
-interface IPrice {
-    price: number,
-    lastChanged: string
-}
-
-interface ICurrency extends ICurrencyDetail {
-    tradeCurrencies: {
-        [key: string]: IPrice | null
-    }
+interface ICurrencies {
+    [key: string]: ICurrency
 }
 
 interface ICurrencyState {
-    currencies: {
-        [key: string]: ICurrency
-    },
+    currencies: ICurrencies,
+    availablePrices: any[]
+    prices: IPrice[]
     lastUpdated: number | null,
     isLoading: boolean
 }
 
-export {ICurrency, ICurrencyState, ICurrencyDetail, IPrice}
+export {ICurrency, ICurrencyState, ICurrencies, IPrice}

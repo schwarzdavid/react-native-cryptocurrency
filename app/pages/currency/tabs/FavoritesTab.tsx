@@ -6,7 +6,6 @@ import {NavigationInjectedProps} from "react-navigation";
 import ScrollTabLayout from "../layouts/ScrollTabLayout";
 import {reloadFavoritesData, removeFavoriteAction} from "../../../reducers/favorites/actions";
 import {Card} from "react-native-paper";
-import {Text} from "react-native";
 import HistoryChart from "../partials/HistoryChart";
 
 const mapState = (state: RootState) => ({

@@ -1,6 +1,7 @@
 import {IListResponse, IProfileResponse, ILatestResponse, IHistoryResponse} from "./types/ApiServiceTypes";
-import {ICurrency, ICurrencyDetail, IPrice} from "../reducers/currency/types";
-import {IHistory, IHistoryState} from "../reducers/favorites/types";
+import {ICurrencies, ICurrency, IPrice} from "../reducers/currency/types";
+import {IFavorite, IHistory} from "../reducers/favorites/types";
+import {ICurrencyTupel} from "../reducers/types";
 
 class ApiService {
     private static readonly API_KEY = 'YQtS1fWSJTzeDo4obvRV8VluszaSzTXXDM61C7GoG2qgS2ttsD';
@@ -13,7 +14,7 @@ class ApiService {
         return url;
     }
 
-    public static async getProfileDetails(symbols: string[]): Promise<ICurrencyDetail[]> {
+    public static async getCurrencyDetails(symbols: string[]): Promise<ICurrency[]> {
         const url = this.buildUrl('profile');
         url.searchParams.append('symbol', symbols.join(','));
 
@@ -28,31 +29,36 @@ class ApiService {
         });
     }
 
-    public static async getSymbols(): Promise<{ [key: string]: ICurrency[] }> {
+    public static async getCurrenciesAndPrices(): Promise<{ currencies: ICurrencies, prices: IPrice[] }> {
         const url = this.buildUrl('list');
 
-        const response = await fetch(url.toString()).then(res => res.json()) as IListResponse;
-        const output = {} as { [key: string]: any };
+        const symbolList = await fetch(url.toString()).then(res => res.json()) as IListResponse;
+        const symbolSet = new Set<string>();
+        const priceSet = new Set<string>();
 
-        response.response.forEach(symbolResponse => {
-            const [baseCurrency, exchangeCurrency] = symbolResponse.symbol.split('/');
-
-            if (!output.hasOwnProperty(baseCurrency)) {
-                output[baseCurrency] = {
-                    tradeCurrencies: {}
-                };
-            }
-            output[baseCurrency].tradeCurrencies[exchangeCurrency] = null;
+        symbolList.response.forEach(res => {
+            const [fromCurrency, toCurrency] = res.symbol.split('/');
+            symbolSet.add(fromCurrency);
+            symbolSet.add(toCurrency);
+            priceSet.add(fromCurrency + '/' + toCurrency);
+            priceSet.add(toCurrency + '/' + fromCurrency);
         });
 
-        const profiles = await this.getProfileDetails(Object.keys(output));
-        profiles.forEach(profile => {
-            if (profile.shortName in output) {
-                Object.assign(output[profile.shortName], profile) as ICurrency;
-            }
+        const symbols = [...symbolSet];
+        const currencies: ICurrencies = {};
+
+        const currencyDetails = await this.getCurrencyDetails(symbols);
+        currencyDetails.forEach(profile => {
+            currencies[profile.shortName] = profile;
         });
 
-        return output;
+        const remotePrices = symbolList.response.map(res => res.symbol);
+
+
+        return {
+            currencies,
+            prices
+        };
     }
 
     public static async getPrices(symbols: string[]): Promise<{ [key: string]: IPrice }> {
@@ -73,7 +79,7 @@ class ApiService {
         return output;
     }
 
-    public static async getHistory(symbols: string[], period: string = '1d'): Promise<{ [key: string]: IHistory }> {
+    public static async getHistory(symbols: string[], period: string = '1d'): Promise<{ [key: string]: IFavorite }> {
         const requests = symbols.map(symbol => {
             const url = this.buildUrl('history');
             url.searchParams.append('symbol', symbol);
@@ -85,7 +91,7 @@ class ApiService {
         });
 
         const responses = await Promise.all(requests);
-        const output = {} as { [key: string]: IHistory };
+        const output = {} as { [key: string]: IFavorite };
 
         responses.forEach(response => {
             const symbol = response.info.symbol.split('/')[0];
@@ -93,7 +99,7 @@ class ApiService {
                 return {
                     timestamp: candle.t,
                     value: parseFloat(candle.h),
-                } as IHistoryState;
+                } as IHistory;
             });
 
             output[symbol] = {

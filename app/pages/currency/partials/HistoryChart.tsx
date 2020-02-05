@@ -1,12 +1,12 @@
 import React from "react";
 import {Grid, LineChart, YAxis} from "react-native-svg-charts"
-import {IHistory, IHistoryState} from "../../../reducers/favorites/types";
+import {IFavorite, IHistory} from "../../../reducers/favorites/types";
 import {StyleSheet, View} from "react-native";
 import {Caption} from "react-native-paper";
 import moment from "moment";
 
 interface IHistoryChartProps {
-    data: IHistory
+    data: IFavorite
 }
 
 class HistoryChart extends React.Component<IHistoryChartProps> {
@@ -24,7 +24,7 @@ class HistoryChart extends React.Component<IHistoryChartProps> {
         return moment(maxTimestamp).format('DD.MM.YYYY hh:mm');
     }
 
-    private _getY = ({item}: { item: IHistoryState }): number => item.value;
+    private _getY = ({item}: { item: IHistory }): number => item.value;
     private _formatY = (value: number): string => value.toFixed(this.props.data.decimals);
 
     render() {
