@@ -9,7 +9,7 @@ import {Provider as ReduxProvider} from "react-redux";
 import {configureStore} from "./reducers";
 import {PersistGate} from "redux-persist/integration/react";
 import {AppLoading} from "expo";
-import {loadInitialValues} from "./reducers/currency/actions";
+import {reloadCurrencies} from "./reducers/currency/actions";
 
 interface IRootState {
     isAppReady: boolean
@@ -24,7 +24,7 @@ class Root extends React.Component<InitialProps, IRootState> {
 
     async prefetchData(){
         // @ts-ignore
-        await store.dispatch(loadInitialValues());
+        await store.dispatch(reloadCurrencies());
     }
 
     render() {

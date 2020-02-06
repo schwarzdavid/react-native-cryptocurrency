@@ -1,19 +1,20 @@
-import {ICurrencyTupel} from "../types";
-
-interface IHistory {
+interface IHistoryPrice {
     timestamp: number,
     value: number
 }
 
 interface IFavorite {
-    history: IHistory[],
-    decimals: number,
-    currencies: ICurrencyTupel
+    history: IHistoryPrice[],
+    decimals: number
+}
+
+interface IFavorites {
+    [key: string]: IFavorite
 }
 
 interface IFavoritesState {
-    favorites: IFavorite[],
+    favorites: IFavorites,
     isLoading: boolean
 }
 
-export {IFavoritesState, IFavorite, IHistory}
+export {IFavoritesState, IFavorite, IHistoryPrice}

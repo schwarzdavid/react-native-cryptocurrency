@@ -7,20 +7,20 @@ import {IFavorite} from "./types";
 //*******************************************
 // TOGGLE FAVORITE ACTION
 //*******************************************
-const TOGGLE_FAVORITE = 'TOGGLE_FAVORITES';
+const ADD_FAVORITE = 'ADD_FAVORITES';
 
-interface IToggleFavoriteAction extends Action<typeof TOGGLE_FAVORITE> {
-    key: string
+interface IAddFavoriteAction extends Action<typeof ADD_FAVORITE> {
+    symbol: string
 }
 
-function toggleFavoriteAction(key: string): IToggleFavoriteAction {
+function addFavoriteAction(symbol: string): IAddFavoriteAction {
     return {
-        type: TOGGLE_FAVORITE,
-        key
+        type: ADD_FAVORITE,
+        symbol
     };
 }
 
-export {TOGGLE_FAVORITE, IToggleFavoriteAction, toggleFavoriteAction}
+export {ADD_FAVORITE, IAddFavoriteAction, addFavoriteAction}
 
 
 //*******************************************
@@ -29,13 +29,13 @@ export {TOGGLE_FAVORITE, IToggleFavoriteAction, toggleFavoriteAction}
 const REMOVE_FAVORITE = 'REMOVE_FAVORITE';
 
 interface IRemoveFavoriteAction extends Action<typeof REMOVE_FAVORITE> {
-    key: string
+    symbol: string
 }
 
-function removeFavoriteAction(key: string): IRemoveFavoriteAction {
+function removeFavoriteAction(symbol: string): IRemoveFavoriteAction {
     return {
         type: REMOVE_FAVORITE,
-        key
+        symbol
     };
 }
 
@@ -102,5 +102,5 @@ export {reloadFavoritesData}
 //*******************************************
 // EXPORT ACTION TYPE
 //*******************************************
-type FavoritesActions = IToggleFavoriteAction | ISetHistoryAction | ISetLoadingStatusAction;
+type FavoritesActions = IAddFavoriteAction | ISetHistoryAction | ISetLoadingStatusAction;
 export {FavoritesActions}

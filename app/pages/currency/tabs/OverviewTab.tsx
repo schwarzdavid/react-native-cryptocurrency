@@ -1,27 +1,25 @@
 import React from "react";
-import {Text, StyleSheet} from "react-native";
+import {Text, StyleSheet, ToastAndroid} from "react-native";
 import ScrollTabLayout from "../layouts/ScrollTabLayout";
 import {NavigationInjectedProps} from "react-navigation";
 import {connect, ConnectedProps} from "react-redux";
-import moment from "moment";
 import {reloadPricesAction} from "../../../reducers/currency/actions";
 import {RootState} from "../../../reducers/reducer";
 import {Card} from "react-native-paper";
-import {IPrice} from "../../../reducers/currency/types";
 import {MaterialCommunityIcons as Icon} from "@expo/vector-icons";
-import {toggleFavoriteAction} from "../../../reducers/favorites/actions";
-import {getCurrentPrices} from "../../../reducers/currency/getter";
+import {addFavoriteAction, removeFavoriteAction} from "../../../reducers/favorites/actions";
+import {getPrices, IPriceDTO} from "../../../reducers/getter";
 
 const mapState = (state: RootState) => ({
     isLoading: state.currency.isLoading,
-    prices: getCurrentPrices(state),
-    currencies: state.currency.currencies,
-    isFavorite: (key: string) => state.favorites.favorites.hasOwnProperty(key)
+    prices: getPrices(state),
+    currencies: state.currency.currencies
 });
 
 const mapDispatch = {
-    reload: reloadPricesAction,
-    toggleFavorite: toggleFavoriteAction
+    reloadPrices: reloadPricesAction,
+    addFavorite: addFavoriteAction,
+    removeFavorite: removeFavoriteAction
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -31,37 +29,42 @@ interface IOverviewTabProps extends NavigationInjectedProps, ConnectedProps<type
 
 class OverviewTab extends React.Component<IOverviewTabProps> {
     componentDidMount(): void {
-        if (!this.props.lastUpdated) {
-            this.props.reload();
+        this.props.reloadPrices();
+    }
+
+    private _toggleFavorite(price: IPriceDTO): void {
+        if(price.isFavorite){
+            removeFavoriteAction(price.tradeSymbol);
+            ToastAndroid.show('Favorite removed', ToastAndroid.SHORT);
+        } else {
+            addFavoriteAction(price.tradeSymbol);
+            ToastAndroid.show('Favorite added', ToastAndroid.SHORT);
         }
     }
 
     renderPriceCards = (): React.ReactNode[] => {
-        const cards = [];
-        for (let [key, currency] of Object.entries(this.props.currency.tradeCurrencies)) {
-            if (currency) {
-                const price = (this.props.currency.tradeCurrencies[key] as IPrice).price;
-                const isFavorite = this.props.isFavorite(key);
-                cards.push(
-                    <Card key={key} style={styles.card}>
-                        <Card.Title title={key} subtitle={this.props.currencies[key].name}
-                                    right={() => <Icon name={isFavorite ? 'star' : 'star-outline'} size={30}
-                                                       style={styles.star} color={isFavorite ? 'gold' : '#000000'}
-                                                       onPress={() => this.props.toggleFavorite(key)}/>}/>
-                        <Card.Content>
-                            <Text key="from">1 {this.props.currency.shortName} = {price.toFixed(4)} {key}</Text>
-                            <Text key="to">1 {key} = {(1 / price).toFixed(4)} {this.props.currency.shortName}</Text>
-                        </Card.Content>
-                    </Card>
-                );
-            }
+        const cards: React.ReactNode[] = [];
+        for (let price of this.props.prices) {
+            cards.push(
+                <Card key={price.tradeSymbol} style={styles.card}>
+                    <Card.Title title={price.to.shortName} subtitle={price.to.name}
+                                right={() => <Icon name={price.isFavorite ? 'star' : 'star-outline'} size={30}
+                                                   style={styles.star} color={price.isFavorite ? 'gold' : '#000000'}
+                                                   onPress={() => this._toggleFavorite(price)}/>}/>
+                    <Card.Content>
+                        <Text key="from">1 {price.from.shortName} = {price.value.toFixed(4)} {price.to.shortName}</Text>
+                        <Text
+                            key="to">1 {price.to.shortName} = {(1 / price.value).toFixed(4)} {price.from.shortName}</Text>
+                    </Card.Content>
+                </Card>
+            );
         }
         return cards;
     };
 
     render() {
         return (
-            <ScrollTabLayout refreshing={this.props.isLoading} onRefresh={this.props.reload}>
+            <ScrollTabLayout refreshing={this.props.isLoading} onRefresh={this.props.reloadPrices}>
                 {this.renderPriceCards()}
             </ScrollTabLayout>
         );

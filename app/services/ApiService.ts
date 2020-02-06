@@ -1,6 +1,6 @@
 import {IListResponse, IProfileResponse, ILatestResponse, IHistoryResponse} from "./types/ApiServiceTypes";
-import {IAvailableTrades, ICurrencies, IPrices} from "../reducers/currency/types";
-import {IFavorite, IHistory} from "../reducers/favorites/types";
+import {ICurrencies, IPrices} from "../reducers/currency/types";
+import {IFavorite, IHistoryPrice} from "../reducers/favorites/types";
 
 class ApiService {
     private static readonly API_KEY = 'YQtS1fWSJTzeDo4obvRV8VluszaSzTXXDM61C7GoG2qgS2ttsD';
@@ -13,10 +13,7 @@ class ApiService {
         return url;
     }
 
-    public static async getInitialValues(): Promise<{
-        currencies: ICurrencies,
-        availableTrades: IAvailableTrades
-    }> {
+    public static async getCurrencies(): Promise<ICurrencies> {
         const url = this._buildUrl('list');
 
         let symbolList: IListResponse;
@@ -27,7 +24,7 @@ class ApiService {
         }
 
         const symbolSet = new Set<string>();
-        const availableTrades = {} as IAvailableTrades;
+        const availableTrades = {} as { [key: string]: string[] };
 
         symbolList.response.forEach(res => {
             const [fromCurrency, toCurrency] = res.symbol.split('/');
@@ -40,21 +37,25 @@ class ApiService {
             availableTrades[fromCurrency].push(toCurrency);
         });
 
-        const currencySymbols = [...symbolSet];
+        let currencies = await this.getCurrencyDetails([...symbolSet]);
 
-        const currencies = await this.getCurrencies(currencySymbols);
+        for (let [symbol, currency] of Object.entries(currencies)) {
+            if (availableTrades.hasOwnProperty(symbol)) {
+                currency.availableTrades = availableTrades[symbol].filter(tradeSymbol => currencies.hasOwnProperty(tradeSymbol));
+            }
+        }
 
-        return {currencies, availableTrades};
+        return currencies;
     }
 
-    public static async getCurrencies(symbols: string[]): Promise<ICurrencies> {
+    public static async getCurrencyDetails(symbols: string[]): Promise<ICurrencies> {
         const url = this._buildUrl('profile');
         url.searchParams.append('symbol', symbols.join(','));
 
         let response: IProfileResponse;
         try {
             response = await fetch(url.toString()).then(res => res.json()) as IProfileResponse;
-        } catch(e){
+        } catch (e) {
             throw new Error('Cannot fetch currency profiles from url: ' + url.toString());
         }
 
@@ -64,8 +65,8 @@ class ApiService {
             currencies[profile.short_name] = {
                 shortName: profile.short_name,
                 name: profile.name,
-                icon: profile.icon,
-                type: profile.type as 'forex' | 'crypto'
+                type: profile.type as 'forex' | 'crypto',
+                availableTrades: []
             };
         });
 
@@ -79,15 +80,15 @@ class ApiService {
         let response: ILatestResponse;
         try {
             response = await fetch(url.toString()).then(res => res.json()) as ILatestResponse;
-        } catch(e){
+        } catch (e) {
             throw new Error('Cannot fetch latest prices from url ' + url.toString());
         }
         const output = {} as IPrices;
 
         response.response.forEach(price => {
-            const [from, to] = price.symbol.split('/')[1];
+            const [from, to] = price.symbol.split('/');
             output[price.symbol] = {
-                price: parseFloat(price.price),
+                value: parseFloat(price.price),
                 from, to
             };
         });
@@ -101,8 +102,6 @@ class ApiService {
             url.searchParams.append('symbol', symbol);
             url.searchParams.append('period', period);
 
-            console.log(url.toString());
-
             return fetch(url.toString()).then(res => res.json()) as Promise<IHistoryResponse>;
         });
 
@@ -115,7 +114,7 @@ class ApiService {
                 return {
                     timestamp: candle.t,
                     value: parseFloat(candle.h),
-                } as IHistory;
+                } as IHistoryPrice;
             });
 
             output[symbol] = {

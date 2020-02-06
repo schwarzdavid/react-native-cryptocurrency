@@ -11,6 +11,7 @@ function configureStore() {
         )
     );
 
+    // @ts-ignore
     const persistor = persistStore(store);
 
     return {store, persistor};

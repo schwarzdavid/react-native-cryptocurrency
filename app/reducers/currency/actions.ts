@@ -2,7 +2,7 @@ import {ThunkAction} from "redux-thunk";
 import {Action} from "redux";
 import ApiService from "../../services/ApiService";
 import {RootState} from "../reducer";
-import {IAvailableTrades, ICurrencies, IPrice, IPrices} from "./types";
+import {ICurrencies, IPrices} from "./types";
 
 
 //*******************************************
@@ -61,40 +61,19 @@ function setCurrenciesAction(currencies: ICurrencies): ISetCurrenciesAction {
 
 export {SET_CURRENCIES, ISetCurrenciesAction, setCurrenciesAction}
 
-
-//*******************************************
-// SET AVAILABLE TRADES ACTION
-//*******************************************
-const SET_AVAILABLE_TRADES = 'SET_AVAILABLE_TRADES';
-
-interface ISetAvailableTradesAction extends Action<typeof SET_AVAILABLE_TRADES> {
-    availableTrades: IAvailableTrades
-}
-
-function setAvailableTradesAction(availableTrades: IAvailableTrades): ISetAvailableTradesAction {
-    return {
-        type: SET_AVAILABLE_TRADES,
-        availableTrades
-    }
-}
-
-export {SET_AVAILABLE_TRADES, ISetAvailableTradesAction, setAvailableTradesAction}
-
-
 //*******************************************
 // RELOAD CURRENCIES ACTION
 //*******************************************
-function loadInitialValues(): ThunkAction<Promise<void>, RootState, {}, Action> {
+function reloadCurrencies(): ThunkAction<Promise<void>, RootState, {}, Action> {
     return async (dispatch) => {
         dispatch(setLoadingStatusAction(true));
-        const {currencies, availableTrades} = await ApiService.getInitialValues();
+        const currencies = await ApiService.getCurrencies();
         dispatch(setCurrenciesAction(currencies));
-        dispatch(setAvailableTradesAction(availableTrades));
         dispatch(setLoadingStatusAction(false));
     };
 }
 
-export {loadInitialValues}
+export {reloadCurrencies}
 
 
 //*******************************************
@@ -102,13 +81,16 @@ export {loadInitialValues}
 //*******************************************
 function reloadPricesAction(): ThunkAction<Promise<void>, RootState, {}, Action> {
     return async (dispatch, getState) => {
-        dispatch(setLoadingStatusAction(true));
         const state = getState();
-        const requiredPriceSymbols = Object.keys(state.currency.availableTrades[state.settings.baseCurrency])
-            .map(symbol => state.settings.baseCurrency + '/' + symbol);
-        const prices = await ApiService.getPrices(requiredPriceSymbols);
-        dispatch(setPricesAction(prices));
-        dispatch(setLoadingStatusAction(false));
+        const baseCurrency = state.currency.currencies[state.settings.baseCurrency];
+        if (baseCurrency) {
+            dispatch(setLoadingStatusAction(true));
+            const requiredPriceSymbols = baseCurrency.availableTrades
+                .map(symbol => state.settings.baseCurrency + '/' + symbol);
+            const prices = await ApiService.getPrices(requiredPriceSymbols);
+            dispatch(setPricesAction(prices));
+            dispatch(setLoadingStatusAction(false));
+        }
     };
 }
 
@@ -121,6 +103,5 @@ export {reloadPricesAction}
 type CurrencyActionTypes =
     ISetPricesAction
     | ISetLoadingStatusAction
-    | ISetCurrenciesAction
-    | ISetAvailableTradesAction;
+    | ISetCurrenciesAction;
 export {CurrencyActionTypes}
