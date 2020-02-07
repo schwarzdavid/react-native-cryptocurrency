@@ -3,9 +3,17 @@ interface IHistoryPrice {
     value: number
 }
 
-interface IFavorite {
+interface IHistory {
     history: IHistoryPrice[],
     decimals: number
+}
+
+interface IHistories {
+    [key: string]: IHistory
+}
+
+interface IFavorite extends IHistory{
+    isLoading: boolean
 }
 
 interface IFavorites {
@@ -13,8 +21,7 @@ interface IFavorites {
 }
 
 interface IFavoritesState {
-    favorites: IFavorites,
-    isLoading: boolean
+    favorites: IFavorites
 }
 
-export {IFavoritesState, IFavorite, IHistoryPrice}
+export {IFavoritesState, IFavorite, IHistory, IHistoryPrice, IHistories}

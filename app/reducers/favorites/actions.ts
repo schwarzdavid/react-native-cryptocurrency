@@ -2,25 +2,25 @@ import {Action} from "redux";
 import {ThunkAction} from "redux-thunk";
 import {RootState} from "../reducer";
 import ApiService from "../../services/ApiService";
-import {IFavorite} from "./types";
+import {IFavorite, IHistories} from "./types";
 
 //*******************************************
 // TOGGLE FAVORITE ACTION
 //*******************************************
-const ADD_FAVORITE = 'ADD_FAVORITES';
+const CREATE_FAVORITE = 'CREATE_FAVORITE';
 
-interface IAddFavoriteAction extends Action<typeof ADD_FAVORITE> {
+interface ICreateFavoriteAction extends Action<typeof CREATE_FAVORITE> {
     symbol: string
 }
 
-function addFavoriteAction(symbol: string): IAddFavoriteAction {
+function createFavoriteAction(symbol: string): ICreateFavoriteAction {
     return {
-        type: ADD_FAVORITE,
+        type: CREATE_FAVORITE,
         symbol
     };
 }
 
-export {ADD_FAVORITE, IAddFavoriteAction, addFavoriteAction}
+export {CREATE_FAVORITE, ICreateFavoriteAction, createFavoriteAction}
 
 
 //*******************************************
@@ -45,16 +45,17 @@ export {REMOVE_FAVORITE, IRemoveFavoriteAction, removeFavoriteAction}
 //*******************************************
 // SET LOADING STATE
 //*******************************************
-const SET_LOADING_STATUS = 'SET_LOADING_STATUS';
+const SET_LOADING_STATUS = 'SET_FAVORITE_LOADING_STATUS';
 
 interface ISetLoadingStatusAction extends Action<typeof SET_LOADING_STATUS> {
-    status: boolean
+    status: boolean,
+    symbol: string
 }
 
-function setLoadingStatusAction(status: boolean): ISetLoadingStatusAction {
+function setLoadingStatusAction(symbol: string, status: boolean): ISetLoadingStatusAction {
     return {
         type: SET_LOADING_STATUS,
-        status
+        symbol, status
     };
 }
 
@@ -67,10 +68,10 @@ export {SET_LOADING_STATUS, ISetLoadingStatusAction, setLoadingStatusAction}
 const SET_HISTORY = 'SET_HISTORY';
 
 interface ISetHistoryAction extends Action<typeof SET_HISTORY> {
-    history: { [key: string]: IFavorite }
+    history: IHistories
 }
 
-function setHistoryAction(history: { [key: string]: IFavorite }): ISetHistoryAction {
+function setHistoryAction(history: IHistories): ISetHistoryAction {
     return {
         type: SET_HISTORY,
         history
@@ -81,26 +82,50 @@ export {SET_HISTORY, ISetHistoryAction, setHistoryAction}
 
 
 //*******************************************
-// LOAD FAVORITES DATA
+// ADD FAVORITE
 //*******************************************
-function reloadFavoritesData(): ThunkAction<Promise<void>, RootState, {}, Action> {
-    return async (dispatch, getState) => {
-        dispatch(setLoadingStatusAction(true));
-        const state = getState();
-        const requiredCurrencySymbols = Object.keys(state.favorites.favorites).map(favoriteKey => {
-            return [favoriteKey, state.settings.baseCurrency].join('/');
-        });
-        const history = await ApiService.getHistory(requiredCurrencySymbols);
+
+function addFavoriteAction(symbol: string): ThunkAction<Promise<void>, RootState, {}, Action> {
+    return async (dispatch) => {
+        dispatch(createFavoriteAction(symbol));
+        dispatch(setLoadingStatusAction(symbol, true));
+        const history = await ApiService.getHistory([symbol]);
         dispatch(setHistoryAction(history));
-        dispatch(setLoadingStatusAction(false));
+        dispatch(setLoadingStatusAction(symbol, false));
     };
 }
 
-export {reloadFavoritesData}
+export {addFavoriteAction}
+
+
+//*******************************************
+// RELOAD FAVORITES
+//*******************************************
+
+function reloadFavoritesAction(): ThunkAction<Promise<void>, RootState, {}, Action> {
+    return async (dispatch, getState) => {
+        const requiredSymbols = Object.entries(getState().favorites.favorites)
+            .filter(([symbol, favorite]) => !favorite.isLoading)
+            .map(([symbol]) => symbol);
+
+        requiredSymbols.forEach(symbol => {
+            dispatch(setLoadingStatusAction(symbol, true));
+        });
+
+        const history = await ApiService.getHistory(requiredSymbols);
+        dispatch(setHistoryAction(history));
+
+        requiredSymbols.forEach(symbol => {
+            dispatch(setLoadingStatusAction(symbol, false));
+        });
+    };
+}
+
+export {reloadFavoritesAction}
 
 
 //*******************************************
 // EXPORT ACTION TYPE
 //*******************************************
-type FavoritesActions = IAddFavoriteAction | ISetHistoryAction | ISetLoadingStatusAction;
+type FavoritesActions = ICreateFavoriteAction | ISetHistoryAction | ISetLoadingStatusAction | IRemoveFavoriteAction;
 export {FavoritesActions}

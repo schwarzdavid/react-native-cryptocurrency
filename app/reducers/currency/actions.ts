@@ -8,6 +8,7 @@ import {ICurrencies, IPrices} from "./types";
 //*******************************************
 // SET LOADING STATUS ACTION
 //*******************************************
+
 const SET_LOADING_STATUS = 'SET_LOADING_STATUS';
 
 interface ISetLoadingStatusAction extends Action<typeof SET_LOADING_STATUS> {
@@ -27,6 +28,7 @@ export {SET_LOADING_STATUS, ISetLoadingStatusAction, setLoadingStatusAction}
 //*******************************************
 // SET PRICE ACTION
 //*******************************************
+
 const SET_PRICES = 'SET_PRICES';
 
 interface ISetPricesAction extends Action<typeof SET_PRICES> {
@@ -46,6 +48,7 @@ export {SET_PRICES, ISetPricesAction, setPricesAction}
 //*******************************************
 // SET CURRENCIES ACTION
 //*******************************************
+
 const SET_CURRENCIES = 'SET_CURRENCIES';
 
 interface ISetCurrenciesAction extends Action<typeof SET_CURRENCIES> {
@@ -61,9 +64,11 @@ function setCurrenciesAction(currencies: ICurrencies): ISetCurrenciesAction {
 
 export {SET_CURRENCIES, ISetCurrenciesAction, setCurrenciesAction}
 
+
 //*******************************************
 // RELOAD CURRENCIES ACTION
 //*******************************************
+
 function reloadCurrencies(): ThunkAction<Promise<void>, RootState, {}, Action> {
     return async (dispatch) => {
         dispatch(setLoadingStatusAction(true));
@@ -79,6 +84,7 @@ export {reloadCurrencies}
 //*******************************************
 // LOAD PRICE ACTION
 //*******************************************
+
 function reloadPricesAction(): ThunkAction<Promise<void>, RootState, {}, Action> {
     return async (dispatch, getState) => {
         const state = getState();
@@ -100,6 +106,7 @@ export {reloadPricesAction}
 //*******************************************
 // EXPORT ACTION TYPE
 //*******************************************
+
 type CurrencyActionTypes =
     ISetPricesAction
     | ISetLoadingStatusAction

@@ -1,35 +1,39 @@
 import {IFavoritesState} from "./types";
-import {FavoritesActions, SET_HISTORY, SET_LOADING_STATUS, ADD_FAVORITE} from "./actions";
+import {FavoritesActions, SET_HISTORY, SET_LOADING_STATUS, CREATE_FAVORITE, REMOVE_FAVORITE} from "./actions";
 
 const DEFAULT_HISTORY_DECIMALS = 3;
 
 const initialState: IFavoritesState = {
-    favorites: {},
-    isLoading: false
+    favorites: {}
 };
 
 export default function FavoritesReducer(state: IFavoritesState = initialState, action: FavoritesActions): IFavoritesState {
     const clone = Object.assign({}, initialState, state);
     switch (action.type) {
-        case ADD_FAVORITE:
-            if(clone.favorites.hasOwnProperty(action.symbol)){
-                delete clone.favorites[action.symbol];
-            } else {
+        case CREATE_FAVORITE:
+            if (!clone.favorites.hasOwnProperty(action.symbol)) {
                 clone.favorites[action.symbol] = {
                     history: [],
-                    decimals: DEFAULT_HISTORY_DECIMALS
+                    decimals: DEFAULT_HISTORY_DECIMALS,
+                    isLoading: false
                 };
             }
             break;
+        case REMOVE_FAVORITE:
+            delete clone.favorites[action.symbol];
+            break;
         case SET_LOADING_STATUS:
-            clone.isLoading = action.status;
+            if (clone.favorites.hasOwnProperty(action.symbol)) {
+                clone.favorites[action.symbol].isLoading = action.status;
+            }
             break;
         case SET_HISTORY:
-            for(let i in action.history){
-                if(clone.favorites.hasOwnProperty(i)) {
-                    clone.favorites[i] = action.history[i];
+            Object.entries(action.history).forEach(([symbol, history]) => {
+                if (clone.favorites.hasOwnProperty(symbol)) {
+                    clone.favorites[symbol].history = history.history;
+                    clone.favorites[symbol].decimals = history.decimals;
                 }
-            }
+            });
             break;
     }
     return clone;

@@ -4,7 +4,7 @@ import {RootState} from "../../../reducers/reducer";
 import {connect, ConnectedProps} from "react-redux";
 import {NavigationInjectedProps} from "react-navigation";
 import ScrollTabLayout from "../layouts/ScrollTabLayout";
-import {reloadFavoritesData, removeFavoriteAction} from "../../../reducers/favorites/actions";
+import {addFavoriteAction, removeFavoriteAction} from "../../../reducers/favorites/actions";
 import {Card} from "react-native-paper";
 import HistoryChart from "../partials/HistoryChart";
 
@@ -15,7 +15,7 @@ const mapState = (state: RootState) => ({
 });
 
 const mapDispatch = {
-    reload: reloadFavoritesData,
+    reload: addFavoriteAction,
     removeFavorite: removeFavoriteAction
 };
 

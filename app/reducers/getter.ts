@@ -23,12 +23,13 @@ function getPrices(state: RootState): IPriceDTO[] {
             from: state.currency.currencies[price.from],
             to: state.currency.currencies[price.to],
             tradeSymbol: symbol,
-            isFavorite: false
+            isFavorite: state.favorites.favorites.hasOwnProperty(symbol)
         };
     });
 }
 
 export {getPrices, IPriceDTO}
+
 
 //*******************************************
 // FAVORITE DTO

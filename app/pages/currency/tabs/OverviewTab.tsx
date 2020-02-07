@@ -32,15 +32,15 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
         this.props.reloadPrices();
     }
 
-    private _toggleFavorite(price: IPriceDTO): void {
-        if(price.isFavorite){
-            removeFavoriteAction(price.tradeSymbol);
+    private _toggleFavorite = (price: IPriceDTO): void => {
+        if (price.isFavorite) {
+            this.props.removeFavorite(price.tradeSymbol);
             ToastAndroid.show('Favorite removed', ToastAndroid.SHORT);
         } else {
-            addFavoriteAction(price.tradeSymbol);
+            this.props.addFavorite(price.tradeSymbol);
             ToastAndroid.show('Favorite added', ToastAndroid.SHORT);
         }
-    }
+    };
 
     renderPriceCards = (): React.ReactNode[] => {
         const cards: React.ReactNode[] = [];

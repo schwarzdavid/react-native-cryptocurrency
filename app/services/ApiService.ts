@@ -1,6 +1,6 @@
 import {IListResponse, IProfileResponse, ILatestResponse, IHistoryResponse} from "./types/ApiServiceTypes";
 import {ICurrencies, IPrices} from "../reducers/currency/types";
-import {IFavorite, IHistoryPrice} from "../reducers/favorites/types";
+import {IHistories, IHistoryPrice} from "../reducers/favorites/types";
 
 class ApiService {
     private static readonly API_KEY = 'YQtS1fWSJTzeDo4obvRV8VluszaSzTXXDM61C7GoG2qgS2ttsD';
@@ -96,12 +96,13 @@ class ApiService {
         return output;
     }
 
-    public static async getHistory(symbols: string[], period: string = '1d'): Promise<any> {
+    public static async getHistory(symbols: string[], period: string = '1d'): Promise<IHistories> {
         const requests = symbols.map(symbol => {
             const url = this._buildUrl('history');
             url.searchParams.append('symbol', symbol);
             url.searchParams.append('period', period);
 
+            console.log(url.toString());
             return fetch(url.toString()).then(res => res.json()) as Promise<IHistoryResponse>;
         });
 
@@ -110,11 +111,11 @@ class ApiService {
 
         responses.forEach(response => {
             const symbol = response.info.symbol.split('/')[0];
-            const history = response.response.map(candle => {
+            const history: IHistoryPrice[] = response.response.map(candle => {
                 return {
                     timestamp: candle.t,
                     value: parseFloat(candle.h),
-                } as IHistoryPrice;
+                };
             });
 
             output[symbol] = {
