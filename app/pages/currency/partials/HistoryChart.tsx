@@ -1,17 +1,17 @@
 import React from "react";
 import {Grid, LineChart, YAxis} from "react-native-svg-charts"
-import {IFavorite, IHistoryPrice} from "../../../reducers/favorites/types";
+import {IHistory, IHistoryPrice} from "../../../reducers/favorites/types";
 import {StyleSheet, View} from "react-native";
 import {Caption} from "react-native-paper";
 import moment from "moment";
 
 interface IHistoryChartProps {
-    data: IFavorite
+    data: IHistory
 }
 
 class HistoryChart extends React.Component<IHistoryChartProps> {
     private get _timestamps(): number[] {
-        return this.props.data.history.map(historyState => historyState.timestamp * 1000);
+        return this.props.data.history.map(historyState => historyState.timestamp);
     }
 
     private get _minDate(): string {
@@ -42,7 +42,10 @@ class HistoryChart extends React.Component<IHistoryChartProps> {
                                numberOfTicks={verticalTicks} contentInset={{...verticalInsets, left: 5, right: 5}}>
                         <Grid/>
                     </LineChart>
-                    <Caption style={{height: 15, textAlign: 'center'}}>{this._minDate} - {this._maxDate}</Caption>
+                    <View style={{height: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start'}}>
+                        <Caption>{this._minDate}</Caption>
+                        <Caption>{this._maxDate}</Caption>
+                    </View>
                 </View>
             </View>
         );

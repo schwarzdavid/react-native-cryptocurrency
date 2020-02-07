@@ -4,18 +4,17 @@ import {RootState} from "../../../reducers/reducer";
 import {connect, ConnectedProps} from "react-redux";
 import {NavigationInjectedProps} from "react-navigation";
 import ScrollTabLayout from "../layouts/ScrollTabLayout";
-import {addFavoriteAction, removeFavoriteAction} from "../../../reducers/favorites/actions";
-import {Card} from "react-native-paper";
+import {reloadFavoritesAction, removeFavoriteAction} from "../../../reducers/favorites/actions";
+import {ActivityIndicator, Card} from "react-native-paper";
 import HistoryChart from "../partials/HistoryChart";
+import {getFavorites} from "../../../reducers/getter";
 
 const mapState = (state: RootState) => ({
-    isLoading: state.favorites.isLoading,
-    currencies: state.currency.currencies,
-    favorites: state.favorites.favorites
+    favorites: getFavorites(state)
 });
 
 const mapDispatch = {
-    reload: addFavoriteAction,
+    reload: reloadFavoritesAction,
     removeFavorite: removeFavoriteAction
 };
 
@@ -25,33 +24,27 @@ interface IFavoritesTabProps extends NavigationInjectedProps, ConnectedProps<typ
 }
 
 class FavoritesTab extends React.Component<IFavoritesTabProps> {
-    componentDidMount(): void {
-        this.props.reload();
-    }
-
     renderFavoriteCards = (): React.ReactNode[] => {
         const cards = [];
-        for (let [key, history] of Object.entries(this.props.favorites)) {
-            if(this.props.currencies.hasOwnProperty(key)){
-                const favCurrency = this.props.currencies[key];
-                cards.push(
-                    <Card key={key} style={styles.card}>
-                        <Card.Title title={key} subtitle={favCurrency.name} />
-                        <Card.Content>
-                            <HistoryChart data={history}/>
-                        </Card.Content>
-                    </Card>
-                );
-            }
+        for (let favorite of this.props.favorites) {
+            cards.push(
+                <Card key={favorite.tradeSymbol} style={styles.card}>
+                    <Card.Title title={favorite.tradeSymbol} subtitle={favorite.from.name + ' - ' + favorite.to.name}
+                                right={() => <ActivityIndicator size='small' style={{marginRight:15}} animating={favorite.isLoading}/>}/>
+                    <Card.Content>
+                        <HistoryChart data={favorite}/>
+                    </Card.Content>
+                </Card>
+            );
         }
         return cards;
     };
 
     render() {
-        const {isLoading, reload, removeFavorite} = this.props;
+        const {reload} = this.props;
 
         return (
-            <ScrollTabLayout refreshing={isLoading} onRefresh={reload}>
+            <ScrollTabLayout onRefresh={reload}>
                 {this.renderFavoriteCards()}
             </ScrollTabLayout>
         );

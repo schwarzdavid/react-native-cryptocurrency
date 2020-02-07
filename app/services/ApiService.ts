@@ -102,7 +102,6 @@ class ApiService {
             url.searchParams.append('symbol', symbol);
             url.searchParams.append('period', period);
 
-            console.log(url.toString());
             return fetch(url.toString()).then(res => res.json()) as Promise<IHistoryResponse>;
         });
 
@@ -110,7 +109,7 @@ class ApiService {
         const output = {} as any;
 
         responses.forEach(response => {
-            const symbol = response.info.symbol.split('/')[0];
+            const symbol = response.info.symbol;
             const history: IHistoryPrice[] = response.response.map(candle => {
                 return {
                     timestamp: candle.t,
@@ -123,6 +122,7 @@ class ApiService {
                 decimals: parseInt(response.info.decimal)
             }
         });
+
         return output;
     }
 }

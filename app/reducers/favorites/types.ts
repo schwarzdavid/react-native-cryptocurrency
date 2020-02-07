@@ -12,7 +12,7 @@ interface IHistories {
     [key: string]: IHistory
 }
 
-interface IFavorite extends IHistory{
+interface IFavorite extends IHistory {
     isLoading: boolean
 }
 
