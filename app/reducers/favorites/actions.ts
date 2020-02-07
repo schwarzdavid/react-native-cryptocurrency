@@ -2,7 +2,7 @@ import {Action} from "redux";
 import {ThunkAction} from "redux-thunk";
 import {RootState} from "../reducer";
 import ApiService from "../../services/ApiService";
-import {IFavorite, IHistories} from "./types";
+import {IHistories} from "./types";
 
 //*******************************************
 // TOGGLE FAVORITE ACTION
@@ -105,7 +105,7 @@ export {addFavoriteAction}
 function reloadFavoritesAction(): ThunkAction<Promise<void>, RootState, {}, Action> {
     return async (dispatch, getState) => {
         const requiredSymbols = Object.entries(getState().favorites.favorites)
-            .filter(([symbol, favorite]) => !favorite.isLoading)
+            .filter(([, favorite]) => !favorite.isLoading)
             .map(([symbol]) => symbol);
 
         requiredSymbols.forEach(symbol => {

@@ -1,5 +1,5 @@
 import {RootState} from "./reducer";
-import {ICurrency} from "./currency/types";
+import {ICurrencies, ICurrency} from "./currency/types";
 import {IFavorite} from "./favorites/types";
 
 
@@ -17,7 +17,7 @@ interface IPriceDTO {
 
 function getPrices(state: RootState): IPriceDTO[] {
     return Object.entries(state.currency.prices)
-        .filter(([symbol, price]) => price.from === state.settings.baseCurrency)
+        .filter(([, price]) => price.from === state.settings.baseCurrency)
         .map(([symbol, price]) => {
             return {
                 value: price.value,
@@ -58,3 +58,17 @@ function getFavorites(state: RootState): IFavoriteDTO[] {
 }
 
 export {IFavoriteDTO, getFavorites}
+
+//*******************************************
+// BASE CURRENCIES
+//*******************************************
+function getAvailableCurrencies(state: RootState): ICurrencies {
+    return Object.entries(state.currency.currencies).filter(([,currency]) => {
+        return currency.availableTrades.length > 0;
+    }).reduce((output, [symbol,currency]) => {
+        output[symbol] = currency;
+        return output;
+    }, {} as ICurrencies);
+}
+
+export {getAvailableCurrencies}

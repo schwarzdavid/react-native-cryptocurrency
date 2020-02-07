@@ -28,9 +28,9 @@ class ScrollTabLayout extends React.Component<IScrollTabLayoutProps> {
             <View>
                 <LinearGradient colors={['#4DADFE', '#00F1FE', 'transparent']} style={styles.gradient}/>
                 <SafeAreaView style={styles.safeArea}>
-                    <ScrollView onScroll={this._headerAnimate.onScroll} scrollEventThrottle={16}
-                                style={styles.scrollView} refreshControl={<RefreshControl refreshing={this._refreshing}
-                                                                                          onRefresh={this._onRefresh}/>}>
+                    <ScrollView onScroll={this._headerAnimate.onScroll} scrollEventThrottle={16} style={styles.scrollView}
+                                refreshControl={<RefreshControl refreshing={this._refreshing}
+                                                                onRefresh={this._onRefresh}/>}>
                         <View style={styles.view}>
                             {children}
                         </View>
@@ -44,7 +44,7 @@ class ScrollTabLayout extends React.Component<IScrollTabLayoutProps> {
 
 const styles = StyleSheet.create({
     safeArea: {
-        height:'100%'
+        height: '100%'
     },
     scrollView: {
         marginTop: 70,

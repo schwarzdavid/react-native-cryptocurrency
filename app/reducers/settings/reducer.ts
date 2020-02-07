@@ -8,10 +8,8 @@ const initialState: ISettingsState = {
 
 function SettingsReducer(state: ISettingsState = initialState, action: SettingsActionTypes): ISettingsState {
     const clone = cloneDeep(state);
-    switch (action.type) {
-        case SET_BASE_CURRENCY:
-            clone.baseCurrency = action.symbol;
-            break;
+    if (action.type === SET_BASE_CURRENCY) {
+        clone.baseCurrency = action.symbol;
     }
     return clone;
 }

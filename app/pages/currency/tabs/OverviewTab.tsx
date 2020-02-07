@@ -1,25 +1,28 @@
 import React from "react";
-import {Text, StyleSheet, ToastAndroid} from "react-native";
+import {StyleSheet, Text, ToastAndroid, View} from "react-native";
 import ScrollTabLayout from "../layouts/ScrollTabLayout";
 import {NavigationInjectedProps} from "react-navigation";
 import {connect, ConnectedProps} from "react-redux";
 import {reloadPricesAction} from "../../../reducers/currency/actions";
 import {RootState} from "../../../reducers/reducer";
-import {Card} from "react-native-paper";
+import {Card, Headline} from "react-native-paper";
 import {MaterialCommunityIcons as Icon} from "@expo/vector-icons";
 import {addFavoriteAction, removeFavoriteAction} from "../../../reducers/favorites/actions";
 import {getPrices, IPriceDTO} from "../../../reducers/getter";
+import LanguageSwitch from "../../../partials/LanguageSwitch";
+import {setBaseCurrencyAction} from "../../../reducers/settings/actions";
 
 const mapState = (state: RootState) => ({
     isLoading: state.currency.isLoading,
     prices: getPrices(state),
-    currencies: state.currency.currencies
+    baseCurrency: state.settings.baseCurrency
 });
 
 const mapDispatch = {
     reloadPrices: reloadPricesAction,
     addFavorite: addFavoriteAction,
-    removeFavorite: removeFavoriteAction
+    removeFavorite: removeFavoriteAction,
+    setBaseCurrency: setBaseCurrencyAction
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -32,6 +35,14 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
         this.props.reloadPrices();
     }
 
+    componentDidUpdate(prevProps: Readonly<IOverviewTabProps>): void {
+        if(prevProps.baseCurrency !== this.props.baseCurrency){
+            if(this.props.prices.length === 0){
+                this.props.reloadPrices();
+            }
+        }
+    }
+
     private _toggleFavorite = (price: IPriceDTO): void => {
         if (price.isFavorite) {
             this.props.removeFavorite(price.tradeSymbol);
@@ -42,7 +53,11 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
         }
     };
 
-    renderPriceCards = (): React.ReactNode[] => {
+    private _setBaseCurrency = (symbol: string): void => {
+        this.props.setBaseCurrency(symbol);
+    };
+
+    private _renderPriceCards = (): React.ReactNode[] => {
         const cards: React.ReactNode[] = [];
         for (let price of this.props.prices) {
             cards.push(
@@ -65,7 +80,11 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
     render() {
         return (
             <ScrollTabLayout refreshing={this.props.isLoading} onRefresh={this.props.reloadPrices}>
-                {this.renderPriceCards()}
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20}}>
+                    <Headline>Language:</Headline>
+                    <LanguageSwitch value={this.props.baseCurrency} onChange={this._setBaseCurrency}/>
+                </View>
+                {this._renderPriceCards()}
             </ScrollTabLayout>
         );
     }

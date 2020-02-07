@@ -6,8 +6,7 @@ import DisclaimerPage from "./pages/disclaimer/DisclaimerPage";
 
 enum SCREEN {
     CURRENCY = 'Currency',
-    DISCLAIMER = 'Disclaimer',
-    SETTINGS = 'Settings'
+    DISCLAIMER = 'Disclaimer'
 }
 
 const AppNavigator = createStackNavigator({
