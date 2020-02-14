@@ -3,6 +3,7 @@ import {Animated, StyleSheet, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {MaterialCommunityIcons as Icon} from "@expo/vector-icons";
 import {NavigationInjectedProps, withNavigation} from "react-navigation";
+import {SCREEN} from "../../../types/screen";
 
 interface ICurrencyHeaderAnimateProps {
     backgroundColor: Animated.AnimatedInterpolation,
@@ -70,7 +71,7 @@ class CurrencyHeader extends React.Component<ICurrencyHeaderProps> {
                         </View>
                         <View style={styles.appbarContent}>
                             <AnimatedIcon name="information" style={{color}} size={30}
-                                          onPress={() => navigate('Disclaimer')}/>
+                                          onPress={() => navigate(SCREEN.DISCLAIMER)}/>
                         </View>
                     </Animated.View>
                 </SafeAreaView>

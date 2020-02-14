@@ -59,9 +59,11 @@ function getFavorites(state: RootState): IFavoriteDTO[] {
 
 export {IFavoriteDTO, getFavorites}
 
+
 //*******************************************
 // BASE CURRENCIES
 //*******************************************
+
 function getAvailableCurrencies(state: RootState): ICurrencies {
     return Object.entries(state.currency.currencies).filter(([,currency]) => {
         return currency.availableTrades.length > 0;

@@ -22,12 +22,13 @@ interface ILanguageSwitchProps extends ConnectedProps<typeof connector> {
     onChange: (value: string) => void
 }
 
-class LanguageSwitch extends React.Component<ILanguageSwitchProps, ILanguageSwitchState> {
+// TODO: add flag images to options
+class CurrencySwitch extends React.Component<ILanguageSwitchProps, ILanguageSwitchState> {
     private static readonly INITIAL_CURRENCIES = ['EUR', 'USD', 'CZK', 'PLN', 'BTC'];
 
     state = {
         menuVisible: false,
-        searchResult: LanguageSwitch.INITIAL_CURRENCIES,
+        searchResult: CurrencySwitch.INITIAL_CURRENCIES,
         searchText: ''
     };
 
@@ -65,7 +66,6 @@ class LanguageSwitch extends React.Component<ILanguageSwitchProps, ILanguageSwit
                 }
                 return {currency, weight, position};
             })
-            // -1 = a, +1 = b
             .sort((a, b) => {
                 const weightDiff = Math.sign(b.weight - a.weight);
                 if(weightDiff !== 0) {
@@ -118,4 +118,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connector(LanguageSwitch)
+export default connector(CurrencySwitch)

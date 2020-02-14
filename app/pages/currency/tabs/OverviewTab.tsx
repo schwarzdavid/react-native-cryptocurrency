@@ -1,7 +1,7 @@
 import React from "react";
 import {StyleSheet, Text, ToastAndroid, View} from "react-native";
 import ScrollTabLayout from "../layouts/ScrollTabLayout";
-import {NavigationInjectedProps} from "react-navigation";
+import {NavigationInjectedProps, withNavigation} from "react-navigation";
 import {connect, ConnectedProps} from "react-redux";
 import {reloadPricesAction} from "../../../reducers/currency/actions";
 import {RootState} from "../../../reducers/reducer";
@@ -9,8 +9,9 @@ import {Card, Headline} from "react-native-paper";
 import {MaterialCommunityIcons as Icon} from "@expo/vector-icons";
 import {addFavoriteAction, removeFavoriteAction} from "../../../reducers/favorites/actions";
 import {getPrices, IPriceDTO} from "../../../reducers/getter";
-import LanguageSwitch from "../../../partials/LanguageSwitch";
+import LanguageSwitch from "../../../partials/CurrencySwitch";
 import {setBaseCurrencyAction} from "../../../reducers/settings/actions";
+import {SCREEN} from "../../../types/screen";
 
 const mapState = (state: RootState) => ({
     isLoading: state.currency.isLoading,
@@ -36,8 +37,8 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
     }
 
     componentDidUpdate(prevProps: Readonly<IOverviewTabProps>): void {
-        if(prevProps.baseCurrency !== this.props.baseCurrency){
-            if(this.props.prices.length === 0){
+        if (prevProps.baseCurrency !== this.props.baseCurrency) {
+            if (this.props.prices.length === 0) {
                 this.props.reloadPrices();
             }
         }
@@ -57,11 +58,18 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
         this.props.setBaseCurrency(symbol);
     };
 
+    private _onCardPress = (price: IPriceDTO): void => {
+        this.props.navigation.navigate(SCREEN.CONVERTER, {
+            to: price.to.shortName,
+            from: price.from.shortName
+        });
+    };
+
     private _renderPriceCards = (): React.ReactNode[] => {
         const cards: React.ReactNode[] = [];
         for (let price of this.props.prices) {
             cards.push(
-                <Card key={price.tradeSymbol} style={styles.card}>
+                <Card key={price.tradeSymbol} style={styles.card} onPress={() => this._onCardPress(price)}>
                     <Card.Title title={price.to.shortName} subtitle={price.to.name}
                                 right={() => <Icon name={price.isFavorite ? 'star' : 'star-outline'} size={30}
                                                    style={styles.star} color={price.isFavorite ? 'gold' : '#000000'}
@@ -103,4 +111,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connector(OverviewTab)
+export default withNavigation(connector(OverviewTab));
