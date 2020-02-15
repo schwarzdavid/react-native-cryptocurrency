@@ -82,7 +82,7 @@ export {reloadCurrencies}
 
 
 //*******************************************
-// LOAD PRICE ACTION
+// LOAD PRICES ACTION
 //*******************************************
 
 function reloadPricesAction(): ThunkAction<Promise<void>, RootState, {}, Action> {
@@ -101,6 +101,22 @@ function reloadPricesAction(): ThunkAction<Promise<void>, RootState, {}, Action>
 }
 
 export {reloadPricesAction}
+
+
+//*******************************************
+// LOAD ONE PRICE ACTION
+//*******************************************
+
+function reloadPriceAction(symbol: string): ThunkAction<Promise<void>, RootState, {}, Action> {
+    return async (dispatch) => {
+        dispatch(setLoadingStatusAction(true));
+        const price = await ApiService.getPrices([symbol]);
+        dispatch(setPricesAction(price));
+        dispatch(setLoadingStatusAction(false));
+    };
+}
+
+export {reloadPriceAction}
 
 
 //*******************************************

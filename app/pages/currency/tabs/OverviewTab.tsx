@@ -90,7 +90,7 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
             <ScrollTabLayout refreshing={this.props.isLoading} onRefresh={this.props.reloadPrices}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20}}>
                     <Headline>Language:</Headline>
-                    <LanguageSwitch value={this.props.baseCurrency} onChange={this._setBaseCurrency}/>
+                    <LanguageSwitch value={this.props.baseCurrency} onChange={this._setBaseCurrency} right={true}/>
                 </View>
                 {this._renderPriceCards()}
             </ScrollTabLayout>

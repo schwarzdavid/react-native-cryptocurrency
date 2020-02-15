@@ -3,7 +3,9 @@ import {Divider, Headline, Menu, Searchbar} from "react-native-paper";
 import {RootState} from "../reducers/reducer";
 import {connect, ConnectedProps} from "react-redux";
 import {getAvailableCurrencies} from "../reducers/getter";
-import {StyleSheet} from "react-native";
+import {Keyboard, StyleSheet, View} from "react-native";
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {ICurrencies} from "../reducers/currency/types";
 
 const mapState = (state: RootState) => ({
     currencies: getAvailableCurrencies(state)
@@ -19,20 +21,52 @@ interface ILanguageSwitchState {
 
 interface ILanguageSwitchProps extends ConnectedProps<typeof connector> {
     value: string,
-    onChange: (value: string) => void
+    onChange: (value: string) => void,
+    right?: boolean,
+    availableCurrencies?: string[]
 }
 
-// TODO: add flag images to options
 class CurrencySwitch extends React.Component<ILanguageSwitchProps, ILanguageSwitchState> {
     private static readonly INITIAL_CURRENCIES = ['EUR', 'USD', 'CZK', 'PLN', 'BTC'];
 
+    private get initialCurrencies(): string[] {
+        if (Array.isArray(this.props.availableCurrencies)) {
+            const output = CurrencySwitch.INITIAL_CURRENCIES.filter(symbol => {
+                return this.props.availableCurrencies?.includes(symbol);
+            });
+            for (let i = output.length, j = 0; i < 5 && j < Object.keys(this.currencies).length; i++, j++) {
+                const currencySymbol = Object.values(this.currencies)[j].shortName;
+                if (!output.includes(currencySymbol)) {
+                    output.push(currencySymbol);
+                }
+            }
+            return output;
+        }
+        return CurrencySwitch.INITIAL_CURRENCIES;
+    };
+
+    private get currencies(): ICurrencies {
+        if (Array.isArray(this.props.availableCurrencies)) {
+            return Object.entries(this.props.currencies)
+                .filter(([key,]) => {
+                    return this.props.availableCurrencies?.includes(key);
+                })
+                .reduce((output, [key, currency]) => {
+                    output[key] = currency;
+                    return output;
+                }, {} as ICurrencies)
+        }
+        return this.props.currencies;
+    }
+
     state = {
         menuVisible: false,
-        searchResult: CurrencySwitch.INITIAL_CURRENCIES,
+        searchResult: this.initialCurrencies,
         searchText: ''
     };
 
     private _openMenu = (): void => {
+        Keyboard.dismiss();
         this.setState({
             menuVisible: true
         });
@@ -51,7 +85,7 @@ class CurrencySwitch extends React.Component<ILanguageSwitchProps, ILanguageSwit
 
     private _searchForCurrencies = (_searchText: string): void => {
         const searchText = _searchText.toLowerCase();
-        const result = Object.values(this.props.currencies)
+        const result = Object.values(this.currencies)
             .map(currency => {
                 let weight = 0;
                 let position = -1;
@@ -68,13 +102,12 @@ class CurrencySwitch extends React.Component<ILanguageSwitchProps, ILanguageSwit
             })
             .sort((a, b) => {
                 const weightDiff = Math.sign(b.weight - a.weight);
-                if(weightDiff !== 0) {
+                if (weightDiff !== 0) {
                     return weightDiff;
                 }
                 return Math.sign(a.position - b.position);
             })
             .map(currency => currency.currency.shortName);
-        console.log(result);
         result.length = Math.min(result.length, 10);
         this.setState({
             searchResult: result,
@@ -89,10 +122,18 @@ class CurrencySwitch extends React.Component<ILanguageSwitchProps, ILanguageSwit
     };
 
     render() {
+        const anchorStyles: object[] = [styles.anchor];
+        if (this.props.right) {
+            anchorStyles.push(styles.reversedAnchor);
+        }
+
         return (
             <Menu visible={this.state.menuVisible}
                   anchor={
-                      <Headline onPress={this._openMenu}>{this.props.value}</Headline>
+                      <View style={anchorStyles}>
+                          <Headline onPress={this._openMenu}>{this.props.value}</Headline>
+                          <Icon name="chevron-down" size={25}/>
+                      </View>
                   }
                   onDismiss={this._closeMenu}
                   style={styles.menu}>
@@ -115,6 +156,13 @@ const styles = StyleSheet.create({
     searchbar: {
         backgroundColor: 'transparent',
         elevation: 0
+    },
+    anchor: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    reversedAnchor: {
+        flexDirection: 'row-reverse'
     }
 });
 
