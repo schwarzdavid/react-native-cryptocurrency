@@ -62,7 +62,6 @@ class CurrencyHeader extends React.Component<ICurrencyHeaderProps> {
             <Animated.View style={[styles.appbar, {backgroundColor, elevation}]}>
                 <SafeAreaView style={styles.safeArea}>
                     <View style={styles.appbarContent}>
-                        <Icon name="death-star-variant" size={30} color={SURFACE_COLOR}/>
                         <Text style={styles.title}>Currencyshizzl</Text>
                     </View>
                     <View style={styles.appbarContent}>

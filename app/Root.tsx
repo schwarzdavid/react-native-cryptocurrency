@@ -9,6 +9,7 @@ import {Provider as ReduxProvider} from "react-redux";
 import {configureStore} from "./reducers";
 import {PersistGate} from "redux-persist/integration/react";
 import {reloadCurrencies} from "./reducers/currency/actions";
+import {StatusBar} from "react-native";
 
 interface IRootState {
     isAppReady: boolean
@@ -40,6 +41,7 @@ class Root extends React.Component<InitialProps, IRootState> {
                 <ReduxProvider store={store}>
                     <PersistGate persistor={persistor}>
                         <PaperProvider theme={theme}>
+                            <StatusBar barStyle="light-content" />
                             <AppNavigator/>
                         </PaperProvider>
                     </PersistGate>

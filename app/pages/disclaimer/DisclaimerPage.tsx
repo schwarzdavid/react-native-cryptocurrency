@@ -9,7 +9,7 @@ class DisclaimerPage extends React.Component {
     render() {
         return (
             <View style={styles.wrapper}>
-                <StatusBar backgroundColor={HIGHLIGHT_COLOR} animated={true} />
+                <StatusBar backgroundColor={HIGHLIGHT_COLOR} animated={true}/>
                 <Title style={styles.title}>This application is provided by:</Title>
                 <Paragraph style={styles.paragraph}>
                     David Schwarz<Br/>
@@ -23,6 +23,11 @@ class DisclaimerPage extends React.Component {
                 <Title style={styles.title}>Used API:</Title>
                 <Paragraph style={styles.paragraph}>
                     <Text>Forex API (<A href="https://fcsapi.com/">https://fcsapi.com/</A>)</Text>
+                </Paragraph>
+                <Title style={styles.title}>Graphics:</Title>
+                <Paragraph style={styles.paragraph}>
+                    <Text>Icon from <A href="http://clipart-library.com/">http://clipart-library.com</A> - Not for
+                        commercial use</Text>
                 </Paragraph>
             </View>
         );
