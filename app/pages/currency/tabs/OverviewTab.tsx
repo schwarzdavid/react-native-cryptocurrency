@@ -5,13 +5,14 @@ import {NavigationInjectedProps, withNavigation} from "react-navigation";
 import {connect, ConnectedProps} from "react-redux";
 import {reloadPricesAction} from "../../../reducers/currency/actions";
 import {RootState} from "../../../reducers/reducer";
-import {Card, Headline} from "react-native-paper";
+import {Card, Title} from "react-native-paper";
 import {MaterialCommunityIcons as Icon} from "@expo/vector-icons";
 import {addFavoriteAction, removeFavoriteAction} from "../../../reducers/favorites/actions";
 import {getPrices, IPriceDTO} from "../../../reducers/getter";
 import LanguageSwitch from "../../../partials/CurrencySwitch";
 import {setBaseCurrencyAction} from "../../../reducers/settings/actions";
 import {SCREEN} from "../../../types/screen";
+import {BACKGROUND_COLOR, RED_PALETTE} from "../../../Theme";
 
 const mapState = (state: RootState) => ({
     isLoading: state.currency.isLoading,
@@ -87,10 +88,11 @@ class OverviewTab extends React.Component<IOverviewTabProps> {
 
     render() {
         return (
-            <ScrollTabLayout refreshing={this.props.isLoading} onRefresh={this.props.reloadPrices}>
+            <ScrollTabLayout refreshing={this.props.isLoading} onRefresh={this.props.reloadPrices} color={RED_PALETTE}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20}}>
-                    <Headline>Language:</Headline>
-                    <LanguageSwitch value={this.props.baseCurrency} onChange={this._setBaseCurrency} right={true}/>
+                    <Title style={{color: BACKGROUND_COLOR}}>Currency:</Title>
+                    <LanguageSwitch value={this.props.baseCurrency} onChange={this._setBaseCurrency} right={true}
+                                    color={BACKGROUND_COLOR}/>
                 </View>
                 {this._renderPriceCards()}
             </ScrollTabLayout>

@@ -24,6 +24,7 @@ interface ILanguageSwitchProps extends ConnectedProps<typeof connector> {
     onChange: (value: string) => void,
     right?: boolean,
     availableCurrencies?: string[]
+    color?: string
 }
 
 class CurrencySwitch extends React.Component<ILanguageSwitchProps, ILanguageSwitchState> {
@@ -57,6 +58,10 @@ class CurrencySwitch extends React.Component<ILanguageSwitchProps, ILanguageSwit
                 }, {} as ICurrencies)
         }
         return this.props.currencies;
+    }
+
+    private get color(): string {
+        return this.props.color || '#000000';
     }
 
     state = {
@@ -131,8 +136,8 @@ class CurrencySwitch extends React.Component<ILanguageSwitchProps, ILanguageSwit
             <Menu visible={this.state.menuVisible}
                   anchor={
                       <View style={anchorStyles}>
-                          <Headline onPress={this._openMenu}>{this.props.value}</Headline>
-                          <Icon name="chevron-down" size={25}/>
+                          <Headline onPress={this._openMenu} style={{color: this.color}}>{this.props.value}</Headline>
+                          <Icon name="chevron-down" size={25} color={this.color}/>
                       </View>
                   }
                   onDismiss={this._closeMenu}

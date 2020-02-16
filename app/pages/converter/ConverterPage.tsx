@@ -1,5 +1,5 @@
 import React from "react";
-import {TextInput, View, StyleSheet, Keyboard} from "react-native";
+import {Keyboard, StatusBar, StyleSheet, TextInput, View} from "react-native";
 import {NavigationScreenProp} from "react-navigation";
 import CurrencySwitch from "../../partials/CurrencySwitch";
 import {RootState} from "../../reducers/reducer";
@@ -7,6 +7,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {ActivityIndicator, Button, Card, FAB, Modal, Portal, Subheading, Title} from "react-native-paper";
 import {reloadPriceAction} from "../../reducers/currency/actions";
 import {ICurrency} from "../../reducers/currency/types";
+import {HIGHLIGHT_COLOR} from "../../Theme";
 
 const mapState = (state: RootState) => ({
     baseCurrency: state.settings.baseCurrency,
@@ -162,6 +163,7 @@ class ConverterPage extends React.Component<IConverterPageProps, IConverterPageS
     render() {
         return (
             <View>
+                <StatusBar backgroundColor={HIGHLIGHT_COLOR} animated={true}/>
                 <View style={[styles.row, styles.fromCurrency]}>
                     <View>
                         <CurrencySwitch value={this.state.from} onChange={this._fromSymbol}
@@ -173,8 +175,8 @@ class ConverterPage extends React.Component<IConverterPageProps, IConverterPageS
                 </View>
                 <View style={[styles.row, styles.controls]}>
                     <FAB icon="swap-vertical" small disabled={!this._isReversePriceAvailable}
-                         onPress={this._reverseCurrencies}/>
-                    <Button icon="trending-up" style={styles.price}
+                         onPress={this._reverseCurrencies} style={{backgroundColor: HIGHLIGHT_COLOR}}/>
+                    <Button icon="trending-up" style={styles.price} color={HIGHLIGHT_COLOR}
                             mode="contained">1 {this.state.from} = {this._price} {this.state.to}</Button>
                 </View>
                 <View style={[styles.row, styles.toCurrency]}>
