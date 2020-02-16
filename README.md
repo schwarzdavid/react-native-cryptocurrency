@@ -7,5 +7,6 @@ npm install
 npm run android
 ```
 
-## Build APK
+OR:
 
+Install prebuilt .apk file from release -> https://github.com/schwarzdavid/react-native-currencyshizzl/releases
